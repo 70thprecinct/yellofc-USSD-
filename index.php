@@ -32,8 +32,6 @@ if (!$ussd_string || !$msisdn || !$sessionId || !$serviceCode || $serviceCode !=
   exit;
 }
 
-echo "123".$pisi_token;
-
 //To know if the user/msisdn/phone number has successfully a placed bet before or not
 
 if ($ussd_string == "8022*1"){
@@ -92,6 +90,7 @@ if ($ussd_string == "8022*1"){
 if ($ussd_string == "8022"){
     $ussd = "8022";
     if (!create_session($msisdn, $sessionId, $ussd, $debited)){
+        echo 123;
         append_response($msisdn, $sessionId, $ussd_string, $response);
         echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
         exit;
