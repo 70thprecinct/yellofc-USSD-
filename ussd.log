@@ -5950,3 +5950,1683 @@ Payload: {
   "serviceCode": "8022"
 }
 -------------------------
+User: ::1 - April 10, 2026, 11:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*7",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 10, 2026, 11:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*6",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:10 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:10 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:14 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*/",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:14 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:16 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:16 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:18 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:18 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:20 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:20 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:21 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:22 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:22 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:23 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:24 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:25 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:25 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "7",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:25 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "7",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:25 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "7",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:25 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:28 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:28 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:29 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:29 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 9:30 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 12:51 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:07 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:07 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:08 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:08 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:08 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:10 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:10 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:10 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:10 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:10 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:11 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:21 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:22 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:22 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:22 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:22 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:22 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:22 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:24 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:24 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:24 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:24 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:24 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:24 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:25 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:27 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 1:44 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:42 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:42 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:42 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:42 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "6",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:42 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:43 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:44 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:44 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:44 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:44 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:44 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:45 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 5:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 6:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 6:39 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 12, 2026, 6:40 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:43 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:43 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:43 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:43 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:43 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:43 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:44 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:45 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:48 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 6:49 am
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:23 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:35 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:37 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:45 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:46 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:48 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 12:59 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:12 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:58 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:58 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:59 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:59 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 1:59 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:00 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:00 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:01 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "7",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "4-4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:02 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:05 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:06 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:06 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:08 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:09 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "3",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:09 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:09 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:10 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:11 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:11 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:11 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:11 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:13 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:25 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:25 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:26 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:26 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:26 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:26 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:26 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:27 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:27 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "2",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:27 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*6",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:28 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:30 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:30 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:31 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:34 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*5",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:49 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*6",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:51 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:56 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:56 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "8022*4",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------
+User: ::1 - April 13, 2026, 2:57 pm
+Payload: {
+  "msisdn": "2349060943924",
+  "sessionId": "537253828392",
+  "ussdString": "1",
+  "serviceCode": "8022"
+}
+-------------------------

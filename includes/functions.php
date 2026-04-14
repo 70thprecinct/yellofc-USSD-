@@ -1,4 +1,88 @@
 <?php
+function get_psipid($game = null){
+    $array = [
+        "Total Goals" => "5676",
+        "Predictor" => "5677",
+        "Correct Score" => "5678",
+        "Soka 4" => "5706",
+        "Soka 6" => "5707",
+        "Soka 8" => "5708",
+    ];
+
+    return $game? ($array[$game] ?? null) : $array;
+}
+
+function get_token() {
+    $file = "pisi.token.json";
+    $token = null;
+    $json = file_exists($file) ? file_get_contents($file) : null;
+
+    if ($json) {
+        $array = json_decode($json, true);
+        if (isset($array['token']) && isset($array['expiry'])) {
+            if (time() < $array['expiry']) {
+                $token = $array['token'];
+            }
+        }
+    }
+
+    if (!$token) {
+        $res = generate_pisi_token(); 
+
+        if ($res){
+            $token = $res['token'];
+            $expires = $res['expiry'];
+        
+            $array = [
+                "token" => $token,
+                "expiry" => $expires
+            ];
+
+            file_put_contents($file, json_encode($array), LOCK_EX);
+        }
+    }
+
+    return $token;
+}
+
+function generate_pisi_token() {
+    $url = PISI_BASE_URL . "/v1/authentication/create";
+    
+    $ch = curl_init($url);
+
+    $payload = json_encode([
+        "vaspid" => VASPID 
+    ]);
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'vaspid: '.VASPID,
+            'pisi-authorization-token: Bearer Token'
+        ],
+    ]);
+
+    $response = curl_exec($ch);
+
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200) {
+        $data = json_decode($response, true);
+
+        if (isset($data['success']) && $data['success'] == true) {
+            return [
+                "token"  => $data['pisi-authorization-token'],
+                "expiry" => strtotime($data['expiration'])
+            ];
+        }
+    }
+    return false;
+}
+
 function handle_predictor_type($data, $base_sublim, $max){
     $response = "";
     $type = "false";
@@ -7,6 +91,13 @@ function handle_predictor_type($data, $base_sublim, $max){
     $append = false;
     $close = false;
     $is_valid_option = false;
+    $game = "Predictor";
+    $debited = set_debited($data['msisdn'], $game);
+    if ($debited){
+        $data['debited'] = $debited[0];
+        $data['debited_id'] = $debited[1];
+    }
+    $data['is_initial'] = set_initial($data['msisdn'], $game);
 
     if ($data['sublim'] == $base_sublim){
         $response .= "Welcome to Predictor\nPick match outcomes for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
@@ -20,7 +111,7 @@ function handle_predictor_type($data, $base_sublim, $max){
     $user_input = $data['ussd_string'];
     $current_option = $count + 1;
     $type_options = get_default_type_options("predictor");
-    $matches_array = get_matches($max);
+    $matches_array = get_matches("predictor", $max);
 
     if ($count <= $max){
         if (in_array($user_input, [1, 2, 3])){
@@ -31,7 +122,7 @@ function handle_predictor_type($data, $base_sublim, $max){
                     case 3: $user_input = "Away"; break;
                 }
 
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), $matches_array);
+                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), "", $matches_array);
                 $append = true;
             }
             $append = true;
@@ -46,8 +137,8 @@ function handle_predictor_type($data, $base_sublim, $max){
     if ($count < $max){
         $matches = array_column($matches_array, "name");
 
-        if (empty($matches)){
-            $response = "No matches available for today.";
+        if (empty($matches) || count($matches) < $max){
+            $response = "No matches available yet.";
             $type = "false";
             $message_type = 2;
             $close = true;
@@ -68,7 +159,9 @@ function handle_predictor_type($data, $base_sublim, $max){
             }
         }
     }else{
-        list($response, $close, $append) = handleSubmit($user_input, $max, $count, $data['sublim'], $append, "predictor");
+        $data['game'] = $game;
+        $data['psipid'] = get_psipid($data['game']);
+        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "predictor");
 
         if ($close != true){
             $type = "true";
@@ -101,6 +194,13 @@ function handle_total_goals_type($data, $base_sublim, $max){
     $append = false;
     $close = false;
     $is_valid_option = false;
+    $game = "Total Goals";
+    $debited = set_debited($data['msisdn'], $game);
+    if ($debited){
+        $data['debited'] = $debited[0];
+        $data['debited_id'] = $debited[1];
+    }
+    $data['is_initial'] = set_initial($data['msisdn'], $game);
 
     if ($data['sublim'] == $base_sublim){
         $response .= "Welcome to Total Goals\nEnter total goals scored\nin each match to win N".number_format($data['winnings'], 0)."\n";
@@ -114,12 +214,12 @@ function handle_total_goals_type($data, $base_sublim, $max){
     $user_input = $data['ussd_string'];
     $current_option = $count + 1;
     $type_options = get_default_type_options("total_goals");
-    $matches_array = get_matches($max);
+    $matches_array = get_matches("total_goals", $max);
 
     if ($count <= $max){
         if ($data['sublim'] != $base_sublim){
             if (is_numeric($user_input)){
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), $matches_array);
+                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), "Total Goals", $matches_array);
                 $append = true;
             }else{
                 $is_valid_option = true;
@@ -135,8 +235,8 @@ function handle_total_goals_type($data, $base_sublim, $max){
     if ($count < $max){
         $matches = array_column($matches_array, "name");
 
-        if (empty($matches)){
-            $response = "No matches available for today.";
+        if (empty($matches) || count($matches) < $max){
+            $response = "No matches available yet.";
             $type = "false";
             $message_type = 2;
             $close = true;
@@ -158,7 +258,9 @@ function handle_total_goals_type($data, $base_sublim, $max){
             }
         }
     }else{
-        list($response, $close, $append) = handleSubmit($user_input, $max, $count, $data['sublim'], $append, "total_goals");
+        $data['game'] = $game;
+        $data['psipid'] = get_psipid($data['game']);
+        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "total_goals");
 
         if ($close != true){
             $type = "true";
@@ -183,11 +285,6 @@ function handle_total_goals_type($data, $base_sublim, $max){
     return [$response, $type, $message_type];
 }
 
-function is_sport_score($value){
-    $pattern = '/^\d+\s*-\s*\d+$/';
-    return preg_match($pattern, trim($value));
-}
-
 function handle_correct_score_type($data, $base_sublim, $max){
     $response = "";
     $type = "false";
@@ -196,6 +293,13 @@ function handle_correct_score_type($data, $base_sublim, $max){
     $append = false;
     $close = false;
     $is_valid_option = false;
+    $game = "Correct Score";
+    $debited = set_debited($data['msisdn'], $game);
+    if ($debited){
+        $data['debited'] = $debited[0];
+        $data['debited_id'] = $debited[1];
+    }
+    $data['is_initial'] = set_initial($data['msisdn'], $game);
 
     if ($data['sublim'] == $base_sublim){
         $response .= "Welcome to Correct Score\nEnter final scores for each match\n(e.g 2-1, 0-0)\nWin N".number_format($data['winnings'], 0)."\n";
@@ -213,13 +317,13 @@ function handle_correct_score_type($data, $base_sublim, $max){
     $user_input = $data['ussd_string'];
     $current_option = $count + 1;
     $type_options = get_default_type_options("correct_score");
-    $matches_array = get_matches($max);
+    $matches_array = get_matches("correct_score", $max);
 
     if ($count <= $max){
         if ($data['sublim'] != $base_sublim){
             if (is_sport_score($user_input)){
                 $user_input = str_replace(" ", "", $user_input);
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), $matches_array);
+                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), "Correct Score", $matches_array);
                 $data['ussd_string'] = $count;
                 $append = true;
             }else{
@@ -236,8 +340,8 @@ function handle_correct_score_type($data, $base_sublim, $max){
     if ($count < $max){
         $matches = array_column($matches_array, "name");
 
-        if (empty($matches)){
-            $response = "No matches available for today.";
+        if (empty($matches) || count($matches) < $max){
+            $response = "No matches available yet.";
             $type = "false";
             $message_type = 2;
             $close = true;
@@ -258,7 +362,9 @@ function handle_correct_score_type($data, $base_sublim, $max){
             }
         }
     }else{
-        list($response, $close, $append) = handleSubmit($user_input, $max, $count, $data['sublim'], $append, "correct_score");
+        $data['game'] = $game;
+        $data['psipid'] = get_psipid($data['game']);
+        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "correct_score");
 
         if ($close != true){
             $type = "true";
@@ -283,59 +389,6 @@ function handle_correct_score_type($data, $base_sublim, $max){
     return [$response, $type, $message_type];
 }
 
-function handle_predictor($data, $base_ussd){
-    $response = "Something went wrong";
-    $type = "false";
-    $message_type = 2;
-
-    if ($data['checker'] == $base_ussd){
-        $options = "1. Predictor - N1M\n2. Total Goals - N1M\n3. Correct Score - N1M";
-        $response = "Choose Game:\n".$options;
-        $type = "true";
-        $message_type = 1;
-        append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
-        return [$response, $type, $message_type];
-    }
-
-    $sublim = (string) preg_replace('/^'.preg_quote($base_ussd, '/').'/', "", $data['checker']);
-
-    if (strpos($sublim, "1") === 0){
-        list($response, $type, $message_type) = handle_predictor_type(array_merge($data, ["sublim" => $sublim, "name" => "Predictor", "winnings" => 1000000]), 1, 6);
-    }else if (strpos($sublim, "2") === 0){
-        list($response, $type, $message_type) = handle_total_goals_type(array_merge($data, ["sublim" => $sublim, "name" => "Total Goals", "winnings" => 1000000]), 2, 6);
-    }else if (strpos($sublim, "3") === 0){
-        list($response, $type, $message_type) = handle_correct_score_type(array_merge($data, ["sublim" => $sublim, "name" => "Correct Score", "winnings" => 1000000]), 3, 6);
-    }
-
-    return [$response, $type, $message_type];
-}
-
-function get_matches($limit) {
-    return [
-        ["id" => 1, "name" => "Arsenal vs Manchester City"],
-        ["id" => 2, "name" => "Real Madrid vs Barcelona"],
-        ["id" => 3, "name" => "Bayern Munich vs Dortmund"],
-        ["id" => 4, "name" => "Inter Milan vs AC Milan"],
-        ["id" => 5, "name" => "Liverpool vs Chelsea"],
-        ["id" => 6, "name" => "PSG vs Monaco"]
-    ];
-
-    global $conn;
-
-    $query = "SELECT CONCAT(teamaname, ' vs ', teambname) AS fixture FROM mtncorrectscore_teams WHERE DATE(fixmdate) = DATE(NOW()) ORDER BY id DESC LIMIT {$limit}";
-
-    $result = mysqli_query($conn, $query);
-
-    if (!$result) {
-        error_log("Database Query Failed: " . mysqli_error($conn));
-        return [];
-    }
-
-    $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-    return array_column($data, 'fixture');
-}
-
 function handle_soka_type($data, $base_sublim, $max){
     $response = "";
     $type = "false";
@@ -344,9 +397,19 @@ function handle_soka_type($data, $base_sublim, $max){
     $append = false;
     $close = false;
     $custom = false;
+    $game = "Soka {$max}";
+    $debited = set_debited($data['msisdn'], $game);
+    if ($debited){
+        $data['debited'] = $debited[0];
+        $data['debited_id'] = $debited[1];
+    }
+    $data['is_initial'] = set_initial($data['msisdn'], $game);
 
     if ($data['sublim'] == $base_sublim){
         $response .= "Welcome to Soka {$max}\nPick the scores for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
+        $options = "Press 1 to continue...";
+        append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
+        return [$response.$options, $type, $message_type];
     }
 
     if (is_sport_score($data['ussd_string'])){
@@ -357,13 +420,24 @@ function handle_soka_type($data, $base_sublim, $max){
         $data['sublim'] = preg_replace('/'.preg_quote($data['ussd_string'], '/').'$/', "0", $data['sublim']);
     }
 
+    $confirm = substr($data['sublim'], 1, 1);
+
+    if ($confirm != 1){
+        $response = "Thank you. Bye!";
+        $custom = true;
+        $append = false;
+        $close = true;
+    }
+
+    $data['sublim'] = substr_replace($data['sublim'], '', 1, 1);
+
     $count = strlen($data['sublim']) - 1;
     $user_input = $data['ussd_string'];
     $current_option = $count + 1;
     $type_options = get_default_type_options("soka");
-    $matches_array = get_matches($max);
+    $matches_array = get_matches("soka", $max);
 
-    if ($count <= $max){
+    if ($count <= $max && $custom != true){
         if ($data['sublim'] != $base_sublim){
             if ($user_input == 7){
                 $response = "Please enter custom score (e.g 0-2, 3-9):\n";
@@ -373,7 +447,7 @@ function handle_soka_type($data, $base_sublim, $max){
             }else{
                 $user_option = is_sport_score($user_input)? str_replace(" ", "", $user_input) : $type_options[$user_input - 1];
                 $data['ussd_string'] = is_sport_score($user_input)? 7 : $data['ussd_string'];
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_option, $data['ussd_string'], ($count - 1), $matches_array);
+                handle_user_pick($data['msisdn'], $data['session_id'], $user_option, $data['ussd_string'], ($count - 1), "", $matches_array);
                 $append = true;
             }
         }else{
@@ -385,8 +459,8 @@ function handle_soka_type($data, $base_sublim, $max){
         if (!$custom){
             $matches = array_column($matches_array, "name");
 
-            if (empty($matches)){
-                $response = "No matches available for today.";
+            if (empty($matches) || count($matches) < $max){
+                $response = "No matches available yet.";
                 $type = "false";
                 $message_type = 2;
                 $close = true;
@@ -408,7 +482,9 @@ function handle_soka_type($data, $base_sublim, $max){
             }
         }
     }else{
-        list($response, $close, $append) = handleSubmit($user_input, $max, $count, $data['sublim'], $append, "soka");
+        $data['game'] = $game;
+        $data['psipid'] = get_psipid($data['game']);
+        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
 
         if ($close != true){
             $type = "true";
@@ -433,7 +509,82 @@ function handle_soka_type($data, $base_sublim, $max){
     return [$response, $type, $message_type];
 }
 
-function handle_user_pick($msisdn, $session_id, $user_option, $ussd_string, $key, $matches_array){
+function get_games_tables($game = null){
+    $array = [
+        "predictor" => [
+            "round" => null,
+            "teams" => null,
+            "picks" => "mtnoutcomepredictor_picks",
+            "selections" => "mtnoutcomepredictor_picks_selections",
+        ],
+        "correct_score" => [
+            "round" => "mtncorrectscore_rounds",
+            "teams" => "mtncorrectscore_teams",
+            "picks" => "mtncorrectscore_picks",
+            "selections" => null,
+        ],
+        "total_goals" => [
+            "round" => null,
+            "teams" => "mtncorrectgoals_teams",
+            "picks" => "mtncorrectgoals_picks",
+            "selections" => "mtncorrectgoals_picks_selections",
+        ],
+        "soka" => [
+            "round" => null,
+            "teams" => null,
+            "picks" => "soka_picks",
+            "selections" => "soka_number_selections",
+        ]
+    ];
+
+    return $game? ($array[$game] ?? null) : $array;
+}
+
+function is_sport_score($value){
+    $pattern = '/^\d+\s*-\s*\d+$/';
+    return preg_match($pattern, trim($value));
+}
+
+function get_matches($game, $limit) {
+    return [
+        ["id" => 1, "name" => "Chelsea vs. Tottenham"],
+        ["id" => 2, "name" => "Man City vs. Sunderland"],
+        ["id" => 3, "name" => "Arsenal vs. PSG"],
+        ["id" => 4, "name" => "Everton vs. Barcelona"],
+        ["id" => 5, "name" => "Bayern Munchen vs. Real Madrid"],
+        ["id" => 6, "name" => "Stone City vs. MLS"],
+        ["id" => 7, "name" => "Ice City vs. ISeeU"],
+        ["id" => 8, "name" => "Nigeria vs. Ghana"],
+    ];
+
+    global $conn;
+
+    $tables = get_games_tables($game);
+
+    if (!$tables){
+        return [];
+    }
+
+    $table = $tables['teams'];
+
+    if (!$table){
+        return [];
+    }
+
+    $sql = "SELECT id, CONCAT(teamaname, ' vs ', teambname) AS name FROM {$table} WHERE DATE(fixmdate) = DATE(NOW()) ORDER BY id DESC LIMIT {$limit}";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = $result->fetch_all(MYSQL_ASSOC);  
+
+    if (!$rows || empty($rows)) {
+        return [];
+    }
+
+    return $rows;
+}
+
+function handle_user_pick($msisdn, $session_id, $user_option, $ussd_string, $key, $type, $matches_array){
     global $conn;
 
     if (empty($matches_array)) return false;
@@ -458,8 +609,9 @@ function handle_user_pick($msisdn, $session_id, $user_option, $ussd_string, $key
         $array[] = [
             "id" => $id,
             "name" => $name,
-            "ussd" => $ussd_string,
+            "type" => $type,
             "value" => $user_option,
+            "ussd" => $ussd_string,
         ];
 
         $json = json_encode($array);
@@ -508,7 +660,7 @@ function get_default_type_options($type){
     return $array[strtolower($type)] ?? [];
 }
 
-function handleSubmit($user_input, $max, $count, $checker, $append, $type){
+function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type){
     $response = "";
     $options = "";
     $close = false;
@@ -520,20 +672,84 @@ function handleSubmit($user_input, $max, $count, $checker, $append, $type){
     }else {
         if (in_array($user_input, [1, 2])){
             if ($user_input == 1){
+                $sublim .= $data['debited'] == true || $data['is_initial'] == false? "1" : "";
                 if (strlen($sublim) == 1){
                     if (in_array($type, ['soka'])){
-                        $response = "To submit your entry,\n subscription is required.\n\nEntry fee: N100\n";
+                        $response = "To submit your entry,\n subscription is required.\nEntry fee: N100\n";
                     }else{
-                        $response = "To submit your entry,\n subscription is required.\n\nStart 1-day trial(N0)\nThen N100/day auto-renew\n";
+                        $response = "To submit your entry,\n subscription is required.\nStart 1-day trial(N0)\nThen N100/day auto-renew\n";
                     }
                     $options = "1. Continue\n 2.Cancel";
                     $append = true;
                 }else if (strlen($sublim) == 2){
-                    if (in_array($type, ['soka'])){
-                        $response = "Processing request...\nAn SMS will be sent shortly. Reply 'YES' to confirm bet. Thank you.";
+                    $msisdn = $data['msisdn'] ?? null;
+                    $session_id = $data['session_id'] ?? null;
+                    $game = $data['game'] ?? null;
+                    $winnings = $data['winnings'] ?? 0;
+                    $amount = $data['amount'] ?? 100;
+
+                    if (!$msisdn || !$session_id || !$game){
+                        $response = "Something went wrong. Please try again.";
                     }else{
-                        $response = "An SMS will be sent shortly. Reply 'YES' to confirm bet. Thank you.";
+                        $fixtures = get_column("fixtures", "ussd_manager", ["msisdn" => $msisdn, "session_id" => $session_id]);
+
+                        if (!$fixtures){
+                            $response = "Something went wrong. Please try again.";
+                        }else{
+                            $array = json_decode(($fixtures ?? '[]'), true);
+
+                            if (!$array || empty($array)){
+                                $response = "Something went wrong. Please try again.";
+                            }else{
+                                $ticketNo = generate_ticket_number($msisdn);
+
+                                $ticket_data = [
+                                    "origin" => "ussd",
+                                    "game_type" => $game,
+                                    "round" => date("Y-m-d"),
+                                    "ticket_number" => $ticketNo,
+                                    "msisdn" => $msisdn,
+                                    "session_id" => $session_id,
+                                    "amount" => $amount,
+                                    "winnings" => $winnings,
+                                    "status" => "pending",
+                                    "accepted" => $data['debited'],
+                                    "fixtures" => json_decode($fixtures, true),
+                                ];
+
+                                list($status, $ticket_id) = create_ticket($ticket_data); 
+                                
+
+                                if (!$status){
+                                    $response = "Something went wrong. Please try again.";
+                                }else{
+                                    $msg = generate_ticket_message($ticket_data['ticket_number'], $ticket_data['fixtures']);
+
+                                    $token = $data['pisi_token'];
+
+                                    if ($data['debited'] == true){
+                                        $response = "Congratulations. Bet placed successfully. Your betslip will be sent via SMS shortly.";
+                                        clear_debited($data['debited_id'] ?? null);
+                                        send_sms($token, $msisdn, $msg, $data['psipid']);
+                                        has_bet($data['msisdn'], $data['session_id'], true, $game);
+                                    }else{
+                                        if (subscribe($token, $msisdn, $data['psipid'])){
+                                            if (in_array($type, ['soka'])){
+                                                $response = "Processing request...\nAn SMS will be sent shortly. Reply YES to confirm bet. Thank you.";
+                                            }else{
+                                                $response = "An SMS will be sent shortly. Reply YES to confirm bet. Thank you.";
+                                            }
+                                            send_sms($token, $msisdn, $msg, $data['psipid']);
+                                            has_bet($data['msisdn'], $data['session_id'], true, $game);
+                                        }else{
+                                            $response = "Unable to subscribe you. Please try again";
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+
                     $close = true;
                 }
             }else if ($user_input == 2){
@@ -549,6 +765,111 @@ function handleSubmit($user_input, $max, $count, $checker, $append, $type){
     $response .= $options;
 
     return [$response, $close, $append];
+}
+
+function create_ticket($data){
+    global $conn;
+    $fixtures = $data['fixtures'] ?? null;
+
+    if (!$fixtures || empty($fixtures)) return false;
+
+    unset($data['fixtures']);
+
+    $conn->begin_transaction();
+    $ticket_id = insert("mtn_tickets", $data);
+
+    if (!$ticket_id){
+        $conn->rollback();
+        return [false, null];
+    }
+
+    if (!create_selections($ticket_id, $fixtures)){
+        $conn->rollback();
+        return [false, null];
+    }
+
+    $conn->commit();
+    return [true, $ticket_id];
+}
+
+function create_selections($ticket_id, $fixtures){
+    if (!$fixtures || empty($fixtures)) return false;
+
+    $data = [];
+    foreach ($fixtures as $fixture){
+        $data[] = [
+            "ticket_id" => $ticket_id,
+            "fixture" => $fixture['name'],
+            "value" => $fixture['value'],
+        ];
+    }
+
+    if (!insert_multiple("mtn_ticket_selections", $data)) return false;
+
+    return true;
+}
+
+function generate_ticket_message($ticket_id, $fixtures){
+    foreach ($fixtures as $row) {
+        $fixture = $row['name'];
+        $type    = $row['type'] ?? null;
+        $value   = $row['value'];
+
+        $type_text = $type ? strtolower($type) : null;
+
+        if ($type_text) {
+            $lines[] = "{$fixture} - Your bet: {$type_text} of {$value}";
+        } else {
+            $lines[] = "{$fixture} - Your bet: {$value}";
+        }
+    }
+
+    $date = date("l, F jS, Y H:i:s A");
+
+    return "Your Ticket #{$ticket_id}\n" . implode("\n", $lines) . "\nPlaced on {$date}";
+}
+
+function generate_ticket_number($msisdn) {
+    $msisdn = preg_replace('/\D/', '', $msisdn);
+
+    $msisdn_extract = substr($msisdn, -4);
+
+    $time_extract = microtime(true) * 10000;
+
+    $random_extract = random_int(1000, 9999);
+
+    $raw = "{$msisdn_extract}{$time_extract}{$random_extract}";
+
+    $number = strtoupper(substr(hash('sha256', $raw), 0, 8));
+
+    return $number;
+}
+
+function handle_predictor($data, $base_ussd){
+    $response = "Something went wrong";
+    $type = "false";
+    $message_type = 2;
+
+    if ($data['checker'] == $base_ussd){
+        $options = "1. Predictor - N1M\n2. Total Goals - N1M\n3. Correct Score - N1M";
+        $response = "Choose Game:\n".$options;
+        $type = "true";
+        $message_type = 1;
+        append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
+        return [$response, $type, $message_type];
+    }
+
+    $sublim = (string) preg_replace('/^'.preg_quote($base_ussd, '/').'/', "", $data['checker']);
+
+    if (strpos($sublim, "1") === 0){
+        list($response, $type, $message_type) = handle_predictor_type(array_merge($data, ["sublim" => $sublim, "name" => "Predictor", "winnings" => 1000000]), 1, 6);
+    }else if (strpos($sublim, "2") === 0){
+        list($response, $type, $message_type) = handle_total_goals_type(array_merge($data, ["sublim" => $sublim, "name" => "Total Goals", "winnings" => 1000000]), 2, 6);
+    }else if (strpos($sublim, "3") === 0){
+        list($response, $type, $message_type) = handle_correct_score_type(array_merge($data, ["sublim" => $sublim, "name" => "Correct Score", "winnings" => 1000000]), 3, 6);
+    }
+
+    return [$response, $type, $message_type];
 }
 
 function handle_soka($data, $base_ussd, $max = null){
@@ -596,6 +917,238 @@ function handle_others($data, $base_ussd, $max = null){
     return [$response, $type, $message_type];
 }
 
+function insert_multiple($table, $rows) {
+    global $conn;
+
+    if (empty($rows)) {
+        throw new Exception("Insert data cannot be empty");
+    }
+
+    $columns = array_keys($rows[0]);
+
+    $row_placeholder = '(' . implode(',', array_fill(0, count($columns), '?')) . ')';
+
+    $placeholders = implode(',', array_fill(0, count($rows), $row_placeholder));
+
+    $sql = "INSERT INTO {$table} (" . implode(',', $columns) . ") VALUES {$placeholders}";
+
+    try{
+        $stmt = $conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
+        $types = '';
+        $values = [];
+
+        foreach ($rows as $row) {
+            foreach ($columns as $col) {
+                $value = $row[$col] ?? null;
+
+                if (is_bool($value)) {
+                    $value = (int)$value;
+                }
+
+                if (is_int($value)) {
+                    $types .= 'i';
+                } elseif (is_float($value)) {
+                    $types .= 'd';
+                } else {
+                    $types .= 's';
+                }
+
+                $values[] = $value;
+            }
+        }
+
+        $stmt->bind_param($types, ...$values);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+
+        return $stmt->affected_rows;
+    }catch(Exception $e){
+        return false;
+    }
+}
+
+function insert($table, $data) {
+    global $conn;
+
+    $columns = array_keys($data);
+    $placeholders = array_fill(0, count($columns), '?');
+
+    $sql = "INSERT INTO {$table} (" . implode(',', $columns) . ") VALUES (" . implode(',', $placeholders) . ")";
+
+    try{
+        $stmt = $conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
+        $types = '';
+        $values = [];
+
+        foreach ($data as $value) {
+            if (is_int($value)) {
+                $types .= 'i';
+            } else if (is_float($value)) {
+                $types .= 'd';
+            } else {
+                $types .= 's';
+            }
+            $values[] = $value;
+        }
+
+        $stmt->bind_param($types, ...$values);
+ 
+        if (!$stmt->execute()) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+    
+        return $stmt->insert_id;
+    }
+    catch(Exception $e){
+        return false;
+    }
+}
+
+function subscribe($token, $msisdn, $psipid){
+    $curl = curl_init();
+    $url = PISI_BASE_URL.'/v1/subscription/outbound/create';
+
+    $trxid = bin2hex(random_bytes(8));
+
+    $payload = [
+        "pisipid" => $psipid,
+        "msisdn"  => $msisdn,
+        "channel" => "USSD",
+        "trxid"   => $trxid
+    ];
+
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'vaspid: '.VASPID,
+            'pisi-authorization-token: Bearer ' . $token,
+            'Content-Type: application/json'
+        ],
+    ]);
+
+    $response = curl_exec($curl);
+
+    if ($response === false) {
+        $error = curl_error($curl);
+        curl_close($curl);
+        return false;
+    }
+
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+
+    $decoded = json_decode($response, true);
+
+    if ($httpCode !== 200) {
+        return false;
+    }
+
+    if (isset($decoded['status']) && $decoded['status'] === 'success') {
+        return true;
+    }
+
+    return false;
+}
+
+function send_sms($token, $msisdn, $message, $psipid){
+    $url = PISI_BASE_URL.'/v1/sms/outbound/send';
+    $trans_sms = 'sms'. uniqid().$msisdn;
+
+    $payload = [
+        "pisisid" => $psipid,
+        "msisdn" => $msisdn,
+        "message" => $message,
+        "trxid" => $trans_sms,
+    ];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'pisi-authorization-token: Bearer '.$token.'',
+        'vaspid: '.VASPID,
+        'Content-Type: application/json',
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    $response = curl_exec($ch);
+
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200) {
+        $data = json_decode($response, true);
+
+        if (isset($data['success']) && $data['success'] == true) {
+            return true;
+        }
+    }
+
+    return false;  
+}
+
+function get_column($column, $table, $cond_array){
+    global $conn;
+
+    $sql = "SELECT {$column} FROM {$table} WHERE 1=1";
+
+    $where = "";
+
+    foreach ($cond_array ?? [] as $key => $datum){
+        $where .= " AND {$key} = ?";
+    }
+
+    $sql .= "{$where} LIMIT 1";
+
+    $types = '';
+    $values = [];
+
+    foreach ($cond_array ?? [] as $value) {
+        if (is_int($value)) {
+            $types .= 'i';
+        } elseif (is_float($value)) {
+            $types .= 'd';
+        } else {
+            $types .= 's';
+        }
+        $values[] = $value;
+    }
+
+    $stmt = $conn->prepare($sql);
+    if (!empty($values)) {
+        $stmt->bind_param($types, ...$values);
+    }
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    $row = $result->fetch_assoc();
+
+    if (!$row || !($row[$column] ?? null)){
+        return null;
+    }
+
+    return $row[$column];
+}
+
 function close_session($msisdn, $session_id){
     global $conn;
     $stmt = $conn->prepare("UPDATE ussd_manager SET status = 'closed' WHERE msisdn = ? AND session_id = ?");
@@ -603,15 +1156,19 @@ function close_session($msisdn, $session_id){
     $stmt->execute();
 }
 
-function create_session($msisdn, $session_id, $ussd){
+function create_session($msisdn, $session_id, $ussd, $debited){
     global $conn;
     $stmt = $conn->prepare("SELECT id, ussd FROM ussd_manager WHERE msisdn = ? AND session_id = ? AND status = 'open' ORDER BY id DESC LIMIT 1");
     $stmt->bind_param("ss", $msisdn, $session_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows < 1){
-        $stmt = $conn->prepare("INSERT INTO ussd_manager (msisdn, session_id, ussd, status, datetime) VALUES (?, ?, ?, 'open', NOW())");
-        $stmt->bind_param("sss", $msisdn, $session_id, $ussd);
+        $stmt = $conn->prepare("UPDATE ussd_manager SET status = 'closed' WHERE msisdn = ?");
+        $stmt->bind_param("s", $msisdn);
+        $stmt->execute();
+        
+        $stmt = $conn->prepare("INSERT INTO ussd_manager (msisdn, session_id, ussd, status, debited, datetime) VALUES (?, ?, ?, 'open', ?, NOW())");
+        $stmt->bind_param("ssss", $msisdn, $session_id, $ussd, $debited);
         if ($stmt->execute()){
             return 1;
         }
@@ -642,6 +1199,52 @@ function get_ussd($msisdn, $session_id){
         $row = $result->fetch_assoc();
         return $row['ussd'];
     }
+}
+
+function has_bet($msisdn, $session_id, $has_bet = true, $game = null){
+    global $conn;
+    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ? WHERE msisdn = ? AND session_id = ?");
+    $stmt->bind_param("ssss", $has_bet, $game, $msisdn, $session_id);
+    if ($stmt->execute()){
+        return true;
+    }
+
+    return false;
+}
+
+function set_initial($msisdn, $game){
+    global $conn;
+    $stmt = $conn->prepare("SELECT id FROM ussd_manager WHERE msisdn = ? AND has_bet = 1 AND game = ? ORDER BY id DESC LIMIT 1");
+    $stmt->bind_param("ss", $msisdn, $game);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows < 1){
+        return true;
+    }
+
+    return false;
+}
+
+function clear_debited($id){
+    global $conn;
+    if (!$id) return;
+    $stmt = $conn->prepare("UPDATE soka_subscriptions SET status = 1 WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+}
+
+function set_debited($msisdn, $game){
+    global $conn;
+    $stmt = $conn->prepare("SELECT id FROM soka_subscriptions WHERE msisdn = ? AND service = ? AND status = 0 ORDER BY id DESC LIMIT 1");
+    $stmt->bind_param("ss", $msisdn, $game);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0){
+        $row = $result->fetch_assoc();
+        return [true, $row['id']];
+    }
+
+    return false;
 }
 
 function append_ussd($msisdn, $session_id, $ussd){
@@ -675,4 +1278,9 @@ function ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $me
     ];
     
     return json_encode($jsonData);
+}
+
+function dd($v){
+    print_r($v);
+    die();
 }
