@@ -94,7 +94,7 @@ function handle_predictor_type($data, $base_sublim, $max){
     $game = "Predictor";
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
-        $data['debited'] = $debited[0];
+        $data['debited'] = $debited[0]? 1 : 0;
         $data['debited_id'] = $debited[1];
     }
     $data['is_initial'] = set_initial($data['msisdn'], $game);
@@ -197,7 +197,7 @@ function handle_total_goals_type($data, $base_sublim, $max){
     $game = "Total Goals";
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
-        $data['debited'] = $debited[0];
+        $data['debited'] = $debited[0]? 1 : 0;
         $data['debited_id'] = $debited[1];
     }
     $data['is_initial'] = set_initial($data['msisdn'], $game);
@@ -296,7 +296,7 @@ function handle_correct_score_type($data, $base_sublim, $max){
     $game = "Correct Score";
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
-        $data['debited'] = $debited[0];
+        $data['debited'] = $debited[0]? 1 : 0;
         $data['debited_id'] = $debited[1];
     }
     $data['is_initial'] = set_initial($data['msisdn'], $game);
@@ -400,7 +400,7 @@ function handle_soka_type($data, $base_sublim, $max){
     $game = "Soka {$max}";
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
-        $data['debited'] = $debited[0];
+        $data['debited'] = $debited[0]? 1 : 0;
         $data['debited_id'] = $debited[1];
     }
     $data['is_initial'] = set_initial($data['msisdn'], $game);
@@ -713,7 +713,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                     "amount" => $amount,
                                     "winnings" => $winnings,
                                     "status" => "pending",
-                                    "accepted" => $data['debited'],
+                                    "accepted" => $data['debited']? 1 : 0,
                                     "fixtures" => json_decode($fixtures, true),
                                 ];
 
@@ -1158,6 +1158,7 @@ function close_session($msisdn, $session_id){
 
 function create_session($msisdn, $session_id, $ussd, $debited){
     global $conn;
+    $debited = $debited? 1 : 0;
     $stmt = $conn->prepare("SELECT id, ussd FROM ussd_manager WHERE msisdn = ? AND session_id = ? AND status = 'open' ORDER BY id DESC LIMIT 1");
     $stmt->bind_param("ss", $msisdn, $session_id);
     $stmt->execute();
@@ -1168,13 +1169,10 @@ function create_session($msisdn, $session_id, $ussd, $debited){
         $stmt->execute();
         
         $stmt = $conn->prepare("INSERT INTO ussd_manager (msisdn, session_id, ussd, status, debited, datetime) VALUES (?, ?, ?, 'open', ?, NOW())");
-        $stmt->bind_param("ssss", $msisdn, $session_id, $ussd, $debited);
+        $stmt->bind_param("sssi", $msisdn, $session_id, $ussd, $debited);
         if ($stmt->execute()){
             return 1;
-        }else {
-    // This will print the specific MySQL error
-    echo "Execute failed: " . $stmt->error;
-}
+        }
     }else{
         $row = $result->fetch_assoc();
         if ($row['ussd'] != $ussd){
@@ -1206,8 +1204,9 @@ function get_ussd($msisdn, $session_id){
 
 function has_bet($msisdn, $session_id, $has_bet = true, $game = null){
     global $conn;
+    $has_bet = $has_bet? 1 : 0;
     $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ? WHERE msisdn = ? AND session_id = ?");
-    $stmt->bind_param("ssss", $has_bet, $game, $msisdn, $session_id);
+    $stmt->bind_param("isss", $has_bet, $game, $msisdn, $session_id);
     if ($stmt->execute()){
         return true;
     }
