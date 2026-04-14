@@ -1171,7 +1171,10 @@ function create_session($msisdn, $session_id, $ussd, $debited){
         $stmt->bind_param("ssss", $msisdn, $session_id, $ussd, $debited);
         if ($stmt->execute()){
             return 1;
-        }
+        }else {
+    // This will print the specific MySQL error
+    echo "Execute failed: " . $stmt->error;
+}
     }else{
         $row = $result->fetch_assoc();
         if ($row['ussd'] != $ussd){

@@ -90,7 +90,6 @@ if ($ussd_string == "8022*1"){
 if ($ussd_string == "8022"){
     $ussd = "8022";
     if (!create_session($msisdn, $sessionId, $ussd, $debited)){
-        echo 123;
         append_response($msisdn, $sessionId, $ussd_string, $response);
         echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
         exit;
