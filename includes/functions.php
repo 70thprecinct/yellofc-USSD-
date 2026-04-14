@@ -409,6 +409,9 @@ function handle_soka_type($data, $base_sublim, $max){
         $response .= "Welcome to Soka {$max}\nPick the scores for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
         $options = "Press 1 to continue...";
         append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
+
+        $type = "true";
+        $message_type = 1;
         return [$response.$options, $type, $message_type];
     }
 
