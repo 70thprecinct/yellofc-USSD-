@@ -32,6 +32,8 @@ if (!$ussd_string || !$msisdn || !$sessionId || !$serviceCode || $serviceCode !=
   exit;
 }
 
+echo "123".$pisi_token;
+
 //To know if the user/msisdn/phone number has successfully a placed bet before or not
 
 if ($ussd_string == "8022*1"){
