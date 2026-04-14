@@ -26,7 +26,7 @@ $options = "";
 $checker = null;
 $debited = false;
 
-if (!$ussd_string || !$msisdn || !$sessionId || !$serviceCode || $serviceCode != "8022" || !$pisi_token){
+if ($ussd_string == null || !$msisdn || !$sessionId || !$serviceCode || $serviceCode != "8022" || !$pisi_token){
   append_response($msisdn, $sessionId, $ussd_string, $response);
   echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
   exit;

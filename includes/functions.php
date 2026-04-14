@@ -447,6 +447,7 @@ function handle_soka_type($data, $base_sublim, $max){
                 $custom = true;
                 $type = "true";
                 $message_type = 1;
+                $count = $count - 1;
             }else{
                 $user_option = is_sport_score($user_input)? str_replace(" ", "", $user_input) : $type_options[$user_input - 1];
                 $data['ussd_string'] = is_sport_score($user_input)? 7 : $data['ussd_string'];
@@ -726,7 +727,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                 if (!$status){
                                     $response = "Something went wrong. Please try again.";
                                 }else{
-                                    $msg = generate_ticket_message($ticket_data['ticket_number'], $ticket_data['fixtures']);
+                                    $msg = generate_ticket_message($ticket_data['ticket_number'], $ticket_data['fixtures'], $game);
 
                                     $token = $data['pisi_token'];
 
@@ -736,17 +737,14 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                         send_sms($token, $msisdn, $msg, $data['psipid']);
                                         has_bet($data['msisdn'], $data['session_id'], true, $game);
                                     }else{
-                                        if (subscribe($token, $msisdn, $data['psipid'])){
-                                            if (in_array($type, ['soka'])){
-                                                $response = "Processing request...\nAn SMS will be sent shortly. Reply YES to confirm bet. Thank you.";
-                                            }else{
-                                                $response = "An SMS will be sent shortly. Reply YES to confirm bet. Thank you.";
-                                            }
-                                            send_sms($token, $msisdn, $msg, $data['psipid']);
-                                            has_bet($data['msisdn'], $data['session_id'], true, $game);
+                                        subscribe($token, $msisdn, $data['psipid']);
+                                        if (in_array($type, ['soka'])){
+                                            $response = "Processing request...\nYou will receive a prompt for {$game} shortly. Accept to validate bet. Thank you.";
                                         }else{
-                                            $response = "Unable to subscribe you. Please try again";
+                                            $response = "You will receive a prompt for {$game} shortly. Accept to validate bet. Thank you.";
                                         }
+                                        send_sms($token, $msisdn, $msg, $data['psipid']);
+                                        has_bet($data['msisdn'], $data['session_id'], true, $game);
                                     }
                                 }
                             }
@@ -812,7 +810,7 @@ function create_selections($ticket_id, $fixtures){
     return true;
 }
 
-function generate_ticket_message($ticket_id, $fixtures){
+function generate_ticket_message($ticket_id, $fixtures, $game){
     foreach ($fixtures as $row) {
         $fixture = $row['name'];
         $type    = $row['type'] ?? null;
@@ -829,7 +827,7 @@ function generate_ticket_message($ticket_id, $fixtures){
 
     $date = date("l, F jS, Y H:i:s A");
 
-    return "Your Ticket #{$ticket_id}\n" . implode("\n", $lines) . "\nPlaced on {$date}";
+    return "Your {$game} Ticket #{$ticket_id}\n" . implode("\n", $lines) . "\nPlaced on {$date}.\nNOTE: If prompted, accept to validate bet.";
 }
 
 function generate_ticket_number($msisdn) {
