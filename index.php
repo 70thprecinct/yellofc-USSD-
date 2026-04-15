@@ -84,6 +84,24 @@ if ($ussd_string == "8022*1"){
         echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
         exit;
     }
+}else if ($ussd_string == "8022*7"){
+    $ussd = "80222";
+
+    $ussd_string = 4;
+    if (!create_session($msisdn, $sessionId, $ussd, $debited)){
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
+        exit;
+    }
+}else if ($ussd_string == "8022*8"){
+    $ussd = "80222";
+
+    $ussd_string = 5;
+    if (!create_session($msisdn, $sessionId, $ussd, $debited)){
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
+        exit;
+    }
 }
 
 
