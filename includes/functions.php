@@ -12,6 +12,19 @@ function get_psipid($game = null){
     return $game? ($array[$game] ?? null) : $array;
 }
 
+function get_sms_psipid($game = null){
+    $array = [
+        "Total Goals" => "268",
+        "Predictor" => "269",
+        "Correct Score" => "270",
+        "Soka 4" => "282",
+        "Soka 6" => "283",
+        "Soka 8" => "284",
+    ];
+
+    return $game? ($array[$game] ?? null) : $array;
+}
+
 function get_token() {
     $file = "pisi.token.json";
     $token = null;
@@ -161,6 +174,7 @@ function handle_predictor_type($data, $base_sublim, $max){
     }else{
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
+        $data['sms_psipid'] = get_sms_psipid($data['game']);
         list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "predictor");
 
         if ($close != true){
@@ -260,6 +274,7 @@ function handle_total_goals_type($data, $base_sublim, $max){
     }else{
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
+        $data['sms_psipid'] = get_sms_psipid($data['game']);
         list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "total_goals");
 
         if ($close != true){
@@ -364,6 +379,7 @@ function handle_correct_score_type($data, $base_sublim, $max){
     }else{
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
+        $data['sms_psipid'] = get_sms_psipid($data['game']);
         list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "correct_score");
 
         if ($close != true){
@@ -488,6 +504,7 @@ function handle_soka_type($data, $base_sublim, $max){
     }else{
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
+        $data['sms_psipid'] = get_sms_psipid($data['game']);
         list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
 
         if ($close != true){
@@ -517,7 +534,7 @@ function get_games_tables($game = null){
     $array = [
         "predictor" => [
             "round" => null,
-            "teams" => null,
+            "teams" => "mtncorrectscore_teams",
             "picks" => "mtnoutcomepredictor_picks",
             "selections" => "mtnoutcomepredictor_picks_selections",
         ],
@@ -529,13 +546,13 @@ function get_games_tables($game = null){
         ],
         "total_goals" => [
             "round" => null,
-            "teams" => "mtncorrectgoals_teams",
+            "teams" => "mtncorrectscore_teams",
             "picks" => "mtncorrectgoals_picks",
             "selections" => "mtncorrectgoals_picks_selections",
         ],
         "soka" => [
             "round" => null,
-            "teams" => null,
+            "teams" => "mtncorrectscore_teams",
             "picks" => "soka_picks",
             "selections" => "soka_number_selections",
         ]
@@ -550,17 +567,6 @@ function is_sport_score($value){
 }
 
 function get_matches($game, $limit) {
-    return [
-        ["id" => 1, "name" => "Chelsea vs. Tottenham"],
-        ["id" => 2, "name" => "Man City vs. Sunderland"],
-        ["id" => 3, "name" => "Arsenal vs. PSG"],
-        ["id" => 4, "name" => "Everton vs. Barcelona"],
-        ["id" => 5, "name" => "Bayern Munchen vs. Real Madrid"],
-        ["id" => 6, "name" => "Stone City vs. MLS"],
-        ["id" => 7, "name" => "Ice City vs. ISeeU"],
-        ["id" => 8, "name" => "Nigeria vs. Ghana"],
-    ];
-
     global $conn;
 
     $tables = get_games_tables($game);
@@ -579,12 +585,11 @@ function get_matches($game, $limit) {
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
-    $rows = $result->fetch_all(MYSQL_ASSOC);  
+    $rows = $result->fetch_all(1);
 
     if (!$rows || empty($rows)) {
         return [];
     }
-
     return $rows;
 }
 
@@ -733,8 +738,8 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
 
                                     if ($data['debited'] == true){
                                         $response = "Congratulations. Bet placed successfully. Your betslip will be sent via SMS shortly.";
-                                        clear_debited($data['debited_id'] ?? null);
-                                        send_sms($token, $msisdn, $msg, $data['psipid']);
+                                        clear_debited($data['debited_id'] ?? null, $game);
+                                        send_sms($token, $msisdn, $msg, $data['sms_psipid']);
                                         has_bet($data['msisdn'], $data['session_id'], true, $game);
                                     }else{
                                         subscribe($token, $msisdn, $data['psipid']);
@@ -743,7 +748,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                         }else{
                                             $response = "You will receive a prompt for {$game} shortly. Accept to validate bet. Thank you.";
                                         }
-                                        send_sms($token, $msisdn, $msg, $data['psipid']);
+                                        send_sms($token, $msisdn, $msg, $data['sms_psipid']);
                                         has_bet($data['msisdn'], $data['session_id'], true, $game);
                                     }
                                 }
@@ -1228,18 +1233,34 @@ function set_initial($msisdn, $game){
     return false;
 }
 
-function clear_debited($id){
+function clear_debited($id, $game){
     global $conn;
     if (!$id) return;
-    $stmt = $conn->prepare("UPDATE soka_subscriptions SET status = 1 WHERE id = ?");
+
+    $table = "subscriptions";
+
+    if (stripos($game, "Soka") !== FALSE){
+        $table = "soka_subscriptions";
+    }
+
+    $stmt = $conn->prepare("UPDATE {$table} SET usestat = 1 WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
 }
 
 function set_debited($msisdn, $game){
     global $conn;
-    $stmt = $conn->prepare("SELECT id FROM soka_subscriptions WHERE msisdn = ? AND service = ? AND status = 0 ORDER BY id DESC LIMIT 1");
-    $stmt->bind_param("ss", $msisdn, $game);
+
+    $table = "subscriptions";
+
+    if (stripos($game, "Soka") !== FALSE){
+        $table = "soka_subscriptions";
+    }
+
+    $service = "Yello {$game}";
+
+    $stmt = $conn->prepare("SELECT id FROM {$table} WHERE msisdn = ? AND service = ? AND usestat = 0 ORDER BY id DESC LIMIT 1");
+    $stmt->bind_param("ss", $msisdn, $service);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0){
@@ -1287,3 +1308,16 @@ function dd($v){
     print_r($v);
     die();
 }
+
+/*
+return [
+    ["id" => 1, "name" => "Chelsea vs. Tottenham"],
+    ["id" => 2, "name" => "Man City vs. Sunderland"],
+    ["id" => 3, "name" => "Arsenal vs. PSG"],
+    ["id" => 4, "name" => "Everton vs. Barcelona"],
+    ["id" => 5, "name" => "Bayern Munchen vs. Real Madrid"],
+    ["id" => 6, "name" => "Stone City vs. MLS"],
+    ["id" => 7, "name" => "Ice City vs. ISeeU"],
+    ["id" => 8, "name" => "Nigeria vs. Ghana"],
+];
+*/
