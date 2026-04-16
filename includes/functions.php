@@ -654,7 +654,8 @@ function handle_soka_type_1($data, $base_sublim, $max){
                     case 3: $user_input = "Away {$half}"; break;
                 }
 
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), "", $matches_array);
+                $v = $count - 1;
+                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($v < ($max/2)? $v : ($v - ($max/2))), "", $matches_array);
                 $append = true;
             }
             $append = true;
@@ -677,7 +678,7 @@ function handle_soka_type_1($data, $base_sublim, $max){
                 $close = true;
             }else{
                 $v = $current_option - 1;
-                $current_match = $matches[$v > 3? ($v - ($max/2)) : $v] ?? [];
+                $current_match = $matches[$v < ($max/2)? $v : ($v - ($max/2))] ?? [];
                 $half = ($current_option  < 5? "(1st Half)" : "(2nd Half)");
                 if (!empty($current_match)){
                     $response .= "{$current_match} - {$half}\n";
@@ -886,16 +887,6 @@ function is_sport_score($value){
 }
 
 function get_matches($game, $limit) {
-    return [
-    ["id" => 1, "name" => "Chelsea vs. Tottenham"],
-    ["id" => 2, "name" => "Man City vs. Sunderland"],
-    ["id" => 3, "name" => "Arsenal vs. PSG"],
-    ["id" => 4, "name" => "Everton vs. Barcelona"],
-    ["id" => 5, "name" => "Bayern Munchen vs. Real Madrid"],
-    ["id" => 6, "name" => "Stone City vs. MLS"],
-    ["id" => 7, "name" => "Ice City vs. ISeeU"],
-    ["id" => 8, "name" => "Nigeria vs. Ghana"],
-];
     global $conn;
 
     $tables = get_games_tables($game);
