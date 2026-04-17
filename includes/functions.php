@@ -1,4 +1,56 @@
 <?php
+function get_promotional_message($game)
+{
+    $messages = [
+        [
+            "game" => "Total Goals",
+            "message" => "Predict The Total Goals of 6 matches & WIN ₦1M DAILY!\nFirst day FREE! Dial *8022*2# now to start winning!"
+        ],
+        [
+            "game" => "Correct Score",
+            "message" => "Predict CorrectScores & WIN ₦1M DAILY!\nFirst day FREE! Dial *8022*3# now",
+        ],
+        [
+            "game" => "Soka 4",
+            "message" => "Play Soka 4 & WIN ₦2M DAILY! Dial *8022*4#\nEasy entry, BIG rewards!",
+        ],
+        [
+            "game" => "Total Corners",
+            "message" => "Predict the Total Corners & WIN ₦2M DAILY!\nDial *8022*8# now!",
+        ],
+        [
+            "game" => "Predictor",
+            "message" => "Predict & WIN ₦1M DAILY!\nFirst day FREE! Dial *8022*1#",
+        ],
+        [
+            "game" => "Soka 6",
+            "message" => "Ready for ₦3M? Play Soka 6 DAILY!\nDial *8022*5#",
+        ],
+        [
+            "game" => "Soka Half",
+            "message" => "Predict Halftime & Fulltime Score to  WIN ₦2M! Dial *8022*7# now",
+        ],
+        [
+            "game" => "Soka 8",
+            "message" => "₦10M could be yours TODAY! Play DAILY!\nPlay Soka 8 daily to win BIG. Dial *8022*7#",
+        ]
+    ];
+
+    $game = strtolower(trim($game));
+
+    $filtered = array_values(array_filter($messages, function ($item) use ($game) {
+        return strtolower($item['game']) !== $game;
+    }));
+
+    if (empty($filtered)) {
+        return null;
+    }
+
+    $random = $filtered[array_rand($filtered)];
+
+    return $random['message'];
+}
+
 function get_psipid($game = null){
     $array = [
         "Total Goals" => "5676",
@@ -1055,7 +1107,6 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                     $response = "Something went wrong. Please try again.";
                                 }else{
                                     $msg = generate_ticket_message($ticket_data['ticket_number'], $ticket_data['fixtures'], $game);
-
                                     $token = $data['pisi_token'];
 
                                     if ($data['debited'] == true){
@@ -1142,21 +1193,14 @@ function generate_ticket_message($ticket_id, $fixtures, $game){
     foreach ($fixtures as $row) {
         $count++;
         $fixture = $row['name'];
-        $type    = $row['type'] ?? null;
         $value   = $row['value'];
 
-        $type_text = $type ? strtolower($type) : null;
-
-        if ($type_text) {
-            $lines[] = "{$count}. {$fixture} - Your bet: {$type_text} of {$value}";
-        } else {
-            $lines[] = "{$count}. {$fixture} - Your bet: {$value}";
-        }
+        $lines[] = "{$count}.".str_ireplace("vs.", "-", $fixture)." ({$value})";
     }
 
-    $date = date("l, F jS, Y H:i:s A");
+    $msg = get_promotional_message($game);
 
-    return "Slip ID. #{$ticket_id}\nGame: {$game}\n" . implode("\n", $lines) . "\nPlaced on {$date}.\nNOTE: If prompted, accept to validate bet.";
+    return "Bet Placed!\nSlip No: #{$ticket_id}\nGame: {$game}\nDate: ".date("d-m-Y")."\nTime: ". date("h:i") ."\nSelections:\n". implode("\n", $lines).($msg?"\n\n{$msg}":"");
 }
 
 function generate_ticket_number($msisdn) {
