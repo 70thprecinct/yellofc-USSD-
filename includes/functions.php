@@ -1113,7 +1113,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                         $response = "Congratulations. Bet placed successfully. Your betslip will be sent via SMS shortly.";
                                         clear_debited($data['debited_id'] ?? null, $game);
                                         send_sms($token, $msisdn, $msg, $data['sms_psipid']);
-                                        has_bet($data['msisdn'], $data['session_id'], true, $game);
+                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo);
                                     }else{
                                         subscribe($token, $msisdn, $data['psipid']);
                                         if (in_array($type, ['soka'])){
@@ -1122,7 +1122,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                             $response = "You will receive a prompt for {$game} shortly. Accept to validate bet. Thank you.";
                                         }
                                         send_sms($token, $msisdn, $msg, $data['sms_psipid']);
-                                        has_bet($data['msisdn'], $data['session_id'], true, $game);
+                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo);
                                     }
                                 }
                             }
@@ -1581,11 +1581,12 @@ function get_ussd($msisdn, $session_id){
     }
 }
 
-function has_bet($msisdn, $session_id, $has_bet = true, $game = null){
+function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo = null){
     global $conn;
+
     $has_bet = $has_bet? 1 : 0;
-    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ? WHERE msisdn = ? AND session_id = ?");
-    $stmt->bind_param("isss", $has_bet, $game, $msisdn, $session_id);
+    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ?, ticket_number = ? WHERE msisdn = ? AND session_id = ?");
+    $stmt->bind_param("issss", $has_bet, $game, $ticketNo, $msisdn, $session_id);
     if ($stmt->execute()){
         return true;
     }
@@ -1632,7 +1633,7 @@ function set_debited($msisdn, $game){
 
     $service = "Yello {$game}";
 
-    $stmt = $conn->prepare("SELECT id FROM {$table} WHERE msisdn = ? AND service = ? AND usestat = 1 ORDER BY id DESC LIMIT 1");
+    $stmt = $conn->prepare("SELECT id FROM {$table} WHERE msisdn = ? AND service = ? AND usestat = 1 AND status = 1 ORDER BY id DESC LIMIT 1");
     $stmt->bind_param("ss", $msisdn, $service);
     $stmt->execute();
     $result = $stmt->get_result();
