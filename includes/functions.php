@@ -1622,6 +1622,14 @@ function clear_debited($id, $game){
     $stmt->execute();
 }
 
+function modify_service_name($service){
+    if (in_array($service, ["Total Goals", "Predictor", "Correct Score", "Picks", "Trivia"])){
+        $service = "Yello {$service}";
+    }
+    
+    return $service;
+}
+
 function set_debited($msisdn, $game){
     global $conn;
 
@@ -1631,7 +1639,7 @@ function set_debited($msisdn, $game){
         $table = "soka_subscriptions";
     }
 
-    $service = "Yello {$game}";
+    $service = modify_service_name($game);
 
     $stmt = $conn->prepare("SELECT id FROM {$table} WHERE msisdn = ? AND service = ? AND usestat = 1 AND status = 1 ORDER BY id DESC LIMIT 1");
     $stmt->bind_param("ss", $msisdn, $service);
