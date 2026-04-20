@@ -1714,7 +1714,7 @@ function set_debited($msisdn, $game){
 
     $service = modify_service_name($game);
 
-    $stmt = $conn->prepare("SELECT id FROM {$table} WHERE msisdn = ? AND service = ? AND usestat = 1 AND status = 1 ORDER BY id DESC LIMIT 1");
+    $stmt = $conn->prepare("SELECT id FROM {$table} WHERE msisdn = ? AND service = ? AND usestat = 1 AND status = 1 AND created_at >= NOW() - INTERVAL 1 DAY ORDER BY id DESC LIMIT 1");
     $stmt->bind_param("ss", $msisdn, $service);
     $stmt->execute();
     $result = $stmt->get_result();
