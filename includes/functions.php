@@ -162,7 +162,17 @@ function handle_predictor_type($data, $base_sublim, $max){
     $is_valid_option = false;
     $custom = false;
     $game = "Predictor";
+
+    if (has_bet_today($data['msisdn'], $game)){
+        $response .= "Welcome to {$game}\nWhere you pick match outcomes for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
+        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $type = "false";
+        $message_type = 2;
+        return [$response.$options, $type, $message_type];
+    }
+
     $debited = set_debited($data['msisdn'], $game);
+
     if ($debited){
         $data['debited'] = $debited[0]? 1 : 0;
         $data['debited_id'] = $debited[1];
@@ -286,6 +296,15 @@ function handle_total_goals_type($data, $base_sublim, $max){
     $is_valid_option = false;
     $custom = false;
     $game = "Total Goals";
+
+    if (has_bet_today($data['msisdn'], $game)){
+        $response .= "Welcome to {$game}\nWhere you enter total goals scored\nin {$max} matches to win N".number_format($data['winnings'], 0)."\n";
+        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $type = "false";
+        $message_type = 2;
+        return [$response.$options, $type, $message_type];
+    }
+
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
         $data['debited'] = $debited[0]? 1 : 0;
@@ -406,6 +425,15 @@ function handle_correct_score_type($data, $base_sublim, $max){
     $is_valid_option = false;
     $custom = false;
     $game = "Correct Score";
+
+    if (has_bet_today($data['msisdn'], $game)){
+        $response .= "Welcome to {$game}\nWhere you enter final scores for {$max} matches\n(e.g 2-1, 0-0)\nTo win N".number_format($data['winnings'], 0)."\n";
+        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $type = "false";
+        $message_type = 2;
+        return [$response.$options, $type, $message_type];
+    }
+
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
         $data['debited'] = $debited[0]? 1 : 0;
@@ -531,6 +559,15 @@ function handle_soka_type($data, $base_sublim, $max){
     $is_valid_option = false;
     $custom = false;
     $game = "Soka {$max}";
+
+    if (has_bet_today($data['msisdn'], $game)){
+        $response .= "Welcome to {$game}\nWhere you pick the scores for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
+        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $type = "false";
+        $message_type = 2;
+        return [$response.$options, $type, $message_type];
+    }
+
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
         $data['debited'] = $debited[0]? 1 : 0;
@@ -657,6 +694,15 @@ function handle_soka_type_1($data, $base_sublim, $max){
     $is_valid_option = false;
     $custom = false;
     $game = "Soka Half";
+
+    if (has_bet_today($data['msisdn'], $game)){
+        $response .= "Welcome to {$game}\nWhere you predict match results for\n1st and 2nd half ({$max} picks)\nTo win N".number_format($data['winnings'], 0)."\n";
+        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $type = "false";
+        $message_type = 2;
+        return [$response.$options, $type, $message_type];
+    }
+
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
         $data['debited'] = $debited[0]? 1 : 0;
@@ -786,6 +832,15 @@ function handle_soka_type_2($data, $base_sublim, $max){
     $is_valid_option = false;
     $custom = false;
     $game = "Soka Corners";
+
+    if (has_bet_today($data['msisdn'], $game)){
+        $response .= "Welcome to {$game}\nWhere you predict total corners for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
+        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $type = "false";
+        $message_type = 2;
+        return [$response.$options, $type, $message_type];
+    }
+
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
         $data['debited'] = $debited[0]? 1 : 0;
@@ -1589,6 +1644,24 @@ function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo 
     $stmt->bind_param("issss", $has_bet, $game, $ticketNo, $msisdn, $session_id);
     if ($stmt->execute()){
         return true;
+    }
+
+    return false;
+}
+
+function has_bet_today($msisdn, $game) {
+    global $conn;
+
+    $today = date('Y-m-d');
+
+    $sql = "SELECT id FROM ussd_manager WHERE msisdn = ? AND game = ? AND has_bet = 1 AND debited = 1 AND DATE(datetime) = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $msisdn, $game, $today);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return true; 
     }
 
     return false;
