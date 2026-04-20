@@ -1127,17 +1127,17 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                     $amount = $data['amount'] ?? 100;
 
                     if (!$msisdn || !$session_id || !$game){
-                        $response = "Something went wrong. Please try again.";
+                        $response = "Something went wrong with the session. Please try again.";
                     }else{
                         $fixtures = get_column("fixtures", "ussd_manager", ["msisdn" => $msisdn, "session_id" => $session_id]);
 
                         if (!$fixtures){
-                            $response = "Something went wrong. Please try again.";
+                            $response = "Something went wrong trying to retrieve fixtures. Please try again.";
                         }else{
                             $array = json_decode(($fixtures ?? '[]'), true);
 
                             if (!$array || empty($array)){
-                                $response = "Something went wrong. Please try again.";
+                                $response = "Something went wrong trying to process fixtures. Please try again.";
                             }else{
                                 $ticketNo = generate_ticket_number($msisdn);
 
@@ -1159,7 +1159,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                 
 
                                 if (!$status){
-                                    $response = "Something went wrong. Please try again.";
+                                    $response = "Something went wrong trying to create ticket. Please try again.";
                                 }else{
                                     $msg = generate_ticket_message($ticket_data['ticket_number'], $ticket_data['fixtures'], $game);
                                     $token = $data['pisi_token'];
