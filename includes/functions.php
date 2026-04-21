@@ -1641,7 +1641,7 @@ function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo 
 
     $has_bet = $has_bet? 1 : 0;
     $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ?, ticket_number = ?, message = ? WHERE msisdn = ? AND session_id = ?");
-    $stmt->bind_param("issss", $has_bet, $game, $ticketNo, $msg, $msisdn, $session_id);
+    $stmt->bind_param("isssss", $has_bet, $game, $ticketNo, $msg, $msisdn, $session_id);
     if ($stmt->execute()){
         return true;
     }
