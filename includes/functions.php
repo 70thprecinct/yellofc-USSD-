@@ -4,35 +4,35 @@ function get_promotional_message($game)
     $messages = [
         [
             "game" => "Total Goals",
-            "message" => "Predict The Total Goals of 6 matches & WIN ₦1M DAILY!\nFirst day FREE! Dial *8022*2# now to start winning!"
+            "message" => "Predict The Total Goals of 6 matches & WIN N1M DAILY!\nFirst day FREE! Dial *8022*2# now to start winning!"
         ],
         [
             "game" => "Correct Score",
-            "message" => "Predict CorrectScores & WIN ₦1M DAILY!\nFirst day FREE! Dial *8022*3# now",
+            "message" => "Predict Correct Scores & WIN N1M DAILY!\nFirst day FREE! Dial *8022*3# now",
         ],
         [
             "game" => "Soka 4",
-            "message" => "Play Soka 4 & WIN ₦2M DAILY! Dial *8022*4#\nEasy entry, BIG rewards!",
+            "message" => "Play Soka 4 & WIN N2M DAILY! Dial *8022*4#\nEasy entry, BIG rewards!",
         ],
         [
             "game" => "Total Corners",
-            "message" => "Predict the Total Corners & WIN ₦2M DAILY!\nDial *8022*8# now!",
+            "message" => "Predict the Total Corners & WIN N2M DAILY!\nDial *8022*8# now!",
         ],
         [
             "game" => "Predictor",
-            "message" => "Predict & WIN ₦1M DAILY!\nFirst day FREE! Dial *8022*1#",
+            "message" => "Predict & WIN N1M DAILY!\nFirst day FREE! Dial *8022*1#",
         ],
         [
             "game" => "Soka 6",
-            "message" => "Ready for ₦3M? Play Soka 6 DAILY!\nDial *8022*5#",
+            "message" => "Ready for N3M? Play Soka 6 DAILY!\nDial *8022*5#",
         ],
         [
             "game" => "Soka Half",
-            "message" => "Predict Halftime & Fulltime Score to  WIN ₦2M! Dial *8022*7# now",
+            "message" => "Predict Halftime & Fulltime Score to  WIN N2M! Dial *8022*7# now",
         ],
         [
             "game" => "Soka 8",
-            "message" => "₦10M could be yours TODAY! Play DAILY!\nPlay Soka 8 daily to win BIG. Dial *8022*7#",
+            "message" => "N10M could be yours TODAY! Play DAILY!\nPlay Soka 8 daily to win BIG. Dial *8022*7#",
         ]
     ];
 
@@ -1168,7 +1168,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                         $response = "Congratulations. Bet placed successfully. Your betslip will be sent via SMS shortly.";
                                         clear_debited($data['debited_id'] ?? null, $game);
                                         send_sms($token, $msisdn, $msg, $data['sms_psipid']);
-                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo);
+                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo, $msg);
                                     }else{
                                         subscribe($token, $msisdn, $data['psipid']);
                                         if (in_array($type, ['soka'])){
@@ -1176,8 +1176,8 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                         }else{
                                             $response = "You will receive a prompt for {$game} shortly. Accept to validate bet. Thank you.";
                                         }
-                                        send_sms($token, $msisdn, $msg, $data['sms_psipid']);
-                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo);
+                                        
+                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo, $msg);
                                     }
                                 }
                             }
@@ -1636,12 +1636,12 @@ function get_ussd($msisdn, $session_id){
     }
 }
 
-function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo = null){
+function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo = null, $msg = null){
     global $conn;
 
     $has_bet = $has_bet? 1 : 0;
-    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ?, ticket_number = ? WHERE msisdn = ? AND session_id = ?");
-    $stmt->bind_param("issss", $has_bet, $game, $ticketNo, $msisdn, $session_id);
+    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ?, ticket_number = ?, message = ? WHERE msisdn = ? AND session_id = ?");
+    $stmt->bind_param("issss", $has_bet, $game, $ticketNo, $msg, $msisdn, $session_id);
     if ($stmt->execute()){
         return true;
     }
