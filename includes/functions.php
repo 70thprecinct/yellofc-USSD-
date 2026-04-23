@@ -165,9 +165,10 @@ function handle_predictor_type($data, $base_sublim, $max){
 
     if (has_bet_today($data['msisdn'], $game)){
         $response .= "Welcome to {$game}\nWhere you pick match outcomes for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
         $type = "false";
         $message_type = 2;
+        close_session($data['msisdn'], $data['session_id']);
         return [$response.$options, $type, $message_type];
     }
 
@@ -299,9 +300,10 @@ function handle_total_goals_type($data, $base_sublim, $max){
 
     if (has_bet_today($data['msisdn'], $game)){
         $response .= "Welcome to {$game}\nWhere you enter total goals scored\nin {$max} matches to win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
         $type = "false";
         $message_type = 2;
+        close_session($data['msisdn'], $data['session_id']);
         return [$response.$options, $type, $message_type];
     }
 
@@ -428,9 +430,10 @@ function handle_correct_score_type($data, $base_sublim, $max){
 
     if (has_bet_today($data['msisdn'], $game)){
         $response .= "Welcome to {$game}\nWhere you enter final scores for {$max} matches\n(e.g 2-1, 0-0)\nTo win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
         $type = "false";
         $message_type = 2;
+        close_session($data['msisdn'], $data['session_id']);
         return [$response.$options, $type, $message_type];
     }
 
@@ -562,9 +565,10 @@ function handle_soka_type($data, $base_sublim, $max){
 
     if (has_bet_today($data['msisdn'], $game)){
         $response .= "Welcome to {$game}\nWhere you pick the scores for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
         $type = "false";
         $message_type = 2;
+        close_session($data['msisdn'], $data['session_id']);
         return [$response.$options, $type, $message_type];
     }
 
@@ -697,9 +701,10 @@ function handle_soka_type_1($data, $base_sublim, $max){
 
     if (has_bet_today($data['msisdn'], $game)){
         $response .= "Welcome to {$game}\nWhere you predict match results for\n1st and 2nd half ({$max} picks)\nTo win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
         $type = "false";
         $message_type = 2;
+        close_session($data['msisdn'], $data['session_id']);
         return [$response.$options, $type, $message_type];
     }
 
@@ -835,9 +840,10 @@ function handle_soka_type_2($data, $base_sublim, $max){
 
     if (has_bet_today($data['msisdn'], $game)){
         $response .= "Welcome to {$game}\nWhere you predict total corners for\n{$max} matches to win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... Let's win more tomorrow or dial *8022# to choose another game!";
+        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
         $type = "false";
         $message_type = 2;
+        close_session($data['msisdn'], $data['session_id']);
         return [$response.$options, $type, $message_type];
     }
 
@@ -1503,7 +1509,7 @@ function subscribe($token, $msisdn, $psipid){
 
 function send_sms($token, $msisdn, $message, $psipid){
     $url = PISI_BASE_URL.'/v1/sms/outbound/send';
-    $trans_sms = 'sms'. uniqid().$msisdn;
+    $trans_sms = hash('sha256', time().$msisdn);
 
     $payload = [
         "pisisid" => $psipid,
