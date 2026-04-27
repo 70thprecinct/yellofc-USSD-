@@ -1690,13 +1690,13 @@ function clear_debited($id, $game){
     global $conn;
     if (!$id) return;
 
-    $table = "subscriptions";
+    $table = "non_soka_subscriptions";
 
     if (stripos($game, "Soka") !== FALSE){
         $table = "soka_subscriptions";
     }
 
-    $stmt = $conn->prepare("UPDATE {$table} SET usestat = 0 WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE {$table} SET status = 0, usestat = 0 WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
 }
@@ -1712,7 +1712,7 @@ function modify_service_name($service){
 function set_debited($msisdn, $game){
     global $conn;
 
-    $table = "subscriptions";
+    $table = "non_soka_subscriptions";
 
     if (stripos($game, "Soka") !== FALSE){
         $table = "soka_subscriptions";
