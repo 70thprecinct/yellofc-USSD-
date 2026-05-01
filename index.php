@@ -130,12 +130,52 @@ if ($ussd_string == "8022"){
 }
 
 if (!$checker){
-    $response = "Invalid option. Please go back and try again";
-    $type = "false";
-    $message_type = 2;
-    append_response($msisdn, $sessionId, $ussd_string, $response);
-    echo ussd_formatter($msisdn,$response,$serviceCode,$type,$sessionId,$message_type);
-    exit;
+    $suggestions = get_suggestions($msisdn);
+    
+    if (!$suggestions){
+        $response = "Invalid option. Please go back and try again";
+        $type = "false";
+        $message_type = 2;
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn,$response,$serviceCode,$type,$sessionId,$message_type);
+        exit;
+    }
+
+    $array = json_decode($suggestions, true);
+
+    if (!$array || !is_array($array)){
+        $response = "Invalid option. Please go back and try again";
+        $type = "false";
+        $message_type = 2;
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn,$response,$serviceCode,$type,$sessionId,$message_type);
+        exit;
+    }
+    
+    $item = $array[$ussd_string];
+    if (strtolower($item['name']) == "exit" || !isset($item['code']) || !isset($item['ussd']) || empty($item['code']) || empty($item['ussd'])){
+        $response = "Bye. See you again!";
+        $type = "false";
+        $message_type = 2;
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn,$response,$serviceCode,$type,$sessionId,$message_type);
+        exit;
+    }
+
+    $ussd = $item['code'];
+
+    $ussd_string = $item['ussd'];
+    if (!create_session($msisdn, $sessionId, $ussd, $debited)){
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
+        exit;
+    }
+
+    $checker = get_ussd($msisdn, $sessionId);
+
+    if ($checker){
+      $checker .= $ussd_string;
+    }
 }
 
 $array = [

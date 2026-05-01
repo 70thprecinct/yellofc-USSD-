@@ -1,4 +1,33 @@
 <?php
+function get_cross_sell_games($name, $limit = 4){
+    $games = [
+        ["name" => "Predictor", "amount" => "N1M", "code" => "80221", "ussd" => 1],
+        ["name" => "Total Goals", "amount" => "N1M", "code" => "80221", "ussd" => 2],
+        ["name" => "Correct Score", "amount" => "N1M", "code" => "80221", "ussd" => 3],
+        ["name" => "Soka 4", "amount" => "N2M", "code" => "80222", "ussd" => 1],
+        ["name" => "Soka 6", "amount" => "N3M", "code" => "80222", "ussd" => 2],
+        ["name" => "Soka 8", "amount" => "N10M", "code" => "80222", "ussd" => 3],
+        ["name" => "Soka Half", "amount" => "N2M", "code" => "80222", "ussd" => 4],
+        ["name" => "Soka Corners", "amount" => "N2M", "code" => "80222", "ussd" => 5],
+    ];
+
+    $array = [];
+
+    foreach ($games as $game){
+        if ($game['name'] == $name){
+            continue;
+        }
+
+        if (count($array) < $limit){
+            $array[] = $game;
+        }else{
+            break;
+        }
+    }
+
+    return $array;
+}
+
 function get_promotional_message($game)
 {
     $messages = [
@@ -262,9 +291,9 @@ function handle_predictor_type($data, $base_sublim, $max){
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
         $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "predictor");
+        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "predictor");
 
-        if ($close != true){
+        if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
         }
@@ -392,9 +421,9 @@ function handle_total_goals_type($data, $base_sublim, $max){
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
         $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "total_goals");
+        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "total_goals");
 
-        if ($close != true){
+        if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
         }
@@ -527,9 +556,9 @@ function handle_correct_score_type($data, $base_sublim, $max){
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
         $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "correct_score");
+        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "correct_score");
 
-        if ($close != true){
+        if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
         }
@@ -663,9 +692,9 @@ function handle_soka_type($data, $base_sublim, $max){
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
         $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
+        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
 
-        if ($close != true){
+        if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
         }
@@ -802,9 +831,9 @@ function handle_soka_type_1($data, $base_sublim, $max){
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
         $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
+        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
 
-        if ($close != true){
+        if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
         }
@@ -938,9 +967,9 @@ function handle_soka_type_2($data, $base_sublim, $max){
         $data['game'] = $game;
         $data['psipid'] = get_psipid($data['game']);
         $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
+        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
 
-        if ($close != true){
+        if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
         }
@@ -1108,6 +1137,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
     $response = "";
     $options = "";
     $close = false;
+    $openEntry = false;
     $sublim = substr($checker, ($max + 1));
 
     if ($max == $count){
@@ -1174,7 +1204,27 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
                                         $response = "Congratulations. Bet placed successfully. Your betslip will be sent via SMS shortly.";
                                         clear_debited($data['debited_id'] ?? null, $game);
                                         send_sms($token, $msisdn, $msg, $data['sms_psipid']);
-                                        has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo, $msg);
+
+                                        $games = get_cross_sell_games($game, 4);
+                                        if ($games && is_array($games) && !empty($games)){
+                                            $response .= "\nPlay more & win BIGGER!";
+                                            $array = [];
+                                            foreach ($games as $key => $gamex){
+                                                $sn = $key + 1;
+                                                $array[$sn] = $gamex; 
+                                                $options .= "\n{$sn}. {$gamex['name']} - {$gamex['amount']}";
+                                            }
+
+                                            $options .= "\n0. Exit";
+
+                                            $array[0] = ['name' => 'exit', 'amount' => "0"];
+
+                                            $openEntry = true;
+
+                                            has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo, $msg, json_encode($array));
+                                        }else{
+                                            has_bet($data['msisdn'], $data['session_id'], true, $game, $ticketNo, $msg);
+                                        }
                                     }else{
                                         subscribe($token, $msisdn, $data['psipid']);
                                         if (in_array($type, ['soka'])){
@@ -1204,7 +1254,7 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
 
     $response .= $options;
 
-    return [$response, $close, $append];
+    return [$response, $close, $append, $openEntry];
 }
 
 function create_ticket($data){
@@ -1545,6 +1595,7 @@ function send_sms($token, $msisdn, $message, $psipid){
     return false;  
 }
 
+
 function get_column($column, $table, $cond_array){
     global $conn;
 
@@ -1642,14 +1693,35 @@ function get_ussd($msisdn, $session_id){
     }
 }
 
-function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo = null, $msg = null){
+function has_bet($msisdn, $session_id, $has_bet = true, $game = null, $ticketNo = null, $msg = null, $suggest = null){
     global $conn;
 
     $has_bet = $has_bet? 1 : 0;
-    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ?, ticket_number = ?, message = ? WHERE msisdn = ? AND session_id = ?");
-    $stmt->bind_param("isssss", $has_bet, $game, $ticketNo, $msg, $msisdn, $session_id);
+    $stmt = $conn->prepare("UPDATE ussd_manager SET has_bet = ?, game = ?, ticket_number = ?, message = ?, suggestions = ? WHERE msisdn = ? AND session_id = ?");
+    $stmt->bind_param("issssss", $has_bet, $game, $ticketNo, $msg, $suggest, $msisdn, $session_id);
     if ($stmt->execute()){
         return true;
+    }
+
+    return false;
+}
+
+function get_suggestions($msisdn){
+    global $conn;
+
+    $sql = "SELECT suggestions FROM ussd_manager WHERE msisdn = ? ORDER BY id DESC LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $msisdn);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $suggestions = $row['suggestions'];
+        if (!$suggestions){
+            return false;
+        }
+        return $suggestions;
     }
 
     return false;
