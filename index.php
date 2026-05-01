@@ -1,4 +1,12 @@
 <?php
+ini_set('display_errors', 1);
+
+ini_set('log_errors', 1);
+
+ini_set('error_log', __DIR__ . '/psi_callback_error.log');
+
+error_reporting(E_ALL);
+
 require_once("includes/includables.php");
 
 #ho "Welcome to USSD";
@@ -131,7 +139,7 @@ if ($ussd_string == "8022"){
 
 if (!$checker){
     $suggestions = get_suggestions($msisdn);
-    
+
     if (!$suggestions){
         $response = "Invalid option. Please go back and try again";
         $type = "false";

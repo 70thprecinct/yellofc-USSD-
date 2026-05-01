@@ -8,7 +8,6 @@ function get_cross_sell_games($name, $limit = 4){
         ["name" => "Soka 6", "amount" => "N3M", "code" => "80222", "ussd" => 2],
         ["name" => "Soka 8", "amount" => "N10M", "code" => "80222", "ussd" => 3],
         ["name" => "Soka Half", "amount" => "N2M", "code" => "80222", "ussd" => 4],
-        ["name" => "Soka Corners", "amount" => "N2M", "code" => "80222", "ussd" => 5],
     ];
 
     $array = [];
