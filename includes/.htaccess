@@ -1,0 +1,2 @@
+<Files .env> Require all denied </Files>
+<Files .env.backup> Require all denied </Files>
