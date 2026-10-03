@@ -1283,6 +1283,11 @@ function handleSubmit($data, $user_input, $max, $count, $checker, $append, $type
 
                                 list($status, $ticket_id) = create_ticket($ticket_data); 
                                 
+                                if ($status){
+                                    // Mirror the USSD play into the canonical YelloFC PostgreSQL ledger.
+                                    // The bridge safely holds it pending when the PISI entitlement has not arrived yet.
+                                    sync_yellofc_entry($msisdn, $game, $ticketNo, $ticket_data['fixtures']);
+                                }
 
                                 if (!$status){
                                     $response = "Something went wrong trying to create ticket. Please try again.";
@@ -1699,6 +1704,56 @@ function insert($table, $data) {
     catch(Exception $e){
         return false;
     }
+}
+
+function sync_yellofc_entry($msisdn, $game, $ticketRef, $selections){
+    if (!defined("YELLOFC_ENABLE_ENTRY_BRIDGE") || strtoupper((string)YELLOFC_ENABLE_ENTRY_BRIDGE) !== "YES") return null;
+    if (!defined("YELLOFC_API_BASE_URL") || !YELLOFC_API_BASE_URL ||
+        !defined("YELLOFC_USSD_BRIDGE_SECRET") || strlen((string)YELLOFC_USSD_BRIDGE_SECRET) < 32) return false;
+
+    $path = defined("YELLOFC_USSD_BRIDGE_PATH") && YELLOFC_USSD_BRIDGE_PATH
+        ? YELLOFC_USSD_BRIDGE_PATH : "/api/integrations/ussd/entries";
+    $url = rtrim(YELLOFC_API_BASE_URL, "/") . "/" . ltrim($path, "/");
+    $payload = json_encode([
+        "msisdn" => $msisdn,
+        "game" => $game,
+        "ticketRef" => $ticketRef,
+        "selections" => array_values($selections ?? []),
+    ], JSON_UNESCAPED_SLASHES);
+    if (!$payload) return false;
+
+    $timestamp = (string)round(microtime(true) * 1000);
+    $signature = hash_hmac("sha256", $timestamp . "." . $payload, YELLOFC_USSD_BRIDGE_SECRET);
+
+    $ch = curl_init($url);
+    $headers = [
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "X-YelloFC-Timestamp: " . $timestamp,
+        "X-YelloFC-Signature: " . $signature,
+    ];
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 8,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_HTTPHEADER => $headers,
+    ]);
+    if (defined("YELLOFC_API_BASIC_USER") && defined("YELLOFC_API_BASIC_PASS") &&
+        YELLOFC_API_BASIC_USER !== "" && YELLOFC_API_BASIC_PASS !== "") {
+        curl_setopt($ch, CURLOPT_USERPWD, YELLOFC_API_BASIC_USER . ":" . YELLOFC_API_BASIC_PASS);
+    }
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if (!in_array($httpCode, [201, 202], true)) {
+        error_log("YelloFC entry bridge failed for ticket " . preg_replace('/[^A-Za-z0-9_-]/', '', (string)$ticketRef) . " HTTP " . $httpCode);
+        return false;
+    }
+    $decoded = json_decode((string)$response, true);
+    return is_array($decoded) ? $decoded : true;
 }
 
 function subscribe($token, $msisdn, $psipid){
