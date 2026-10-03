@@ -110,8 +110,10 @@ Acquisition source should be retained as ussd, evina, mfilter or sms-return for 
 
 ## Migration stages
 
-1. CMS content bridge (this branch): all supported USSD fixtures prefer the canonical YelloFC API; Soka Trivia is activated from canonical CMS questions.
-2. Entry bridge: submit USSD plays into the PostgreSQL entry/receipt service, with mtn_tickets retained temporarily as an audit/compatibility mirror.
-3. Entitlement bridge: replace legacy soka_subscriptions/non_soka_subscriptions usestat decisions with central daily_entitlements.
-4. SMS return bridge: issue opaque one-time YelloFC return tokens after verified entitlement events.
-5. Retire legacy duplicate gameplay/subscription state after parity and production certification.
+1. CMS content bridge — IMPLEMENTED ON FEATURE BRANCH: supported USSD fixtures prefer the canonical YelloFC API; Soka Trivia is activated from canonical CMS questions.
+2. Entry bridge — IMPLEMENTED ON FEATURE BRANCH: after the legacy ticket is created, the USSD service sends a signed mirror to the PostgreSQL entry bridge. Existing entitlements commit immediately; otherwise a pending intent waits for the PISI callback.
+3. PISI promotion — IMPLEMENTED ON BACKEND FEATURE BRANCH: verified active_trial/active_paid callbacks attach and finalize matching pending USSD intents into the same canonical entries/receipt/CRM path as Web.
+4. Source attribution — IMPLEMENTED ON BACKEND FEATURE BRANCH: canonical receipt and CRM entry_placed metadata identify the source as ussd while preserving one subscriber identity.
+5. Entitlement decision cutover — NOT YET ENABLED: legacy soka_subscriptions/non_soka_subscriptions usestat remains in place for the live PHP decision path until staging parity proves central daily_entitlements can replace it safely.
+6. SMS return bridge — PARTIALLY AVAILABLE: opaque one-time return tokens exist in the new backend, but production daily-SMS issuance and final TTL policy still require certification.
+7. Legacy retirement — FUTURE: retire duplicate MySQL gameplay/subscription state only after staging and production parity are proven.
