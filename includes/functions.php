@@ -89,6 +89,7 @@ function get_psipid($game = null){
         "Soka 8" => "5708",
         "Soka Corners" => "5709",
         "Soka Half" => "5710",
+        "Trivia" => "5777",
     ];
 
     return $game? ($array[$game] ?? null) : $array;
@@ -104,6 +105,7 @@ function get_sms_psipid($game = null){
         "Soka 8" => "284",
         "Soka Corners" => "285",
         "Soka Half" => "286",
+        "Trivia" => "304",
     ];
 
     return $game? ($array[$game] ?? null) : $array;
@@ -1027,20 +1029,111 @@ function is_sport_score($value){
     return preg_match($pattern, trim($value));
 }
 
+function yellofc_game_key($game, $limit = null) {
+    $name = strtolower(trim((string) $game));
+    if ($name === "soka") {
+        if ((int)$limit === 4) return "soka4";
+        if ((int)$limit === 6) return "soka6";
+        if ((int)$limit === 8) return "soka8";
+    }
+    $map = [
+        "predictor" => "predictor",
+        "football predictor" => "predictor",
+        "total_goals" => "goals",
+        "total goals" => "goals",
+        "correct_score" => "correct",
+        "correct score" => "correct",
+        "soka half" => "half",
+        "soka corners" => "corners",
+        "trivia" => "trivia",
+        "soka trivia" => "trivia",
+    ];
+    return $map[$name] ?? null;
+}
+
+function yellofc_api_get($path) {
+    if (!defined("YELLOFC_API_BASE_URL") || !YELLOFC_API_BASE_URL) return null;
+
+    $url = rtrim(YELLOFC_API_BASE_URL, "/") . "/" . ltrim($path, "/");
+    $ch = curl_init($url);
+    $headers = ["Accept: application/json"];
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_HTTPHEADER => $headers,
+    ]);
+
+    if (defined("YELLOFC_API_BASIC_USER") && defined("YELLOFC_API_BASIC_PASS") &&
+        YELLOFC_API_BASIC_USER !== "" && YELLOFC_API_BASIC_PASS !== "") {
+        curl_setopt($ch, CURLOPT_USERPWD, YELLOFC_API_BASIC_USER . ":" . YELLOFC_API_BASIC_PASS);
+    }
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode !== 200 || !$response) return null;
+    $decoded = json_decode($response, true);
+    return is_array($decoded) ? $decoded : null;
+}
+
+function get_yellofc_round($game, $limit = null) {
+    $gameKey = yellofc_game_key($game, $limit);
+    if (!$gameKey) return null;
+    return yellofc_api_get("/api/player/games/" . rawurlencode($gameKey) . "/rounds/today");
+}
+
+function get_trivia_questions() {
+    $round = get_yellofc_round("trivia");
+    if (!$round || empty($round["questions"]) || !is_array($round["questions"])) return [];
+
+    $questions = [];
+    foreach ($round["questions"] as $question) {
+        $choices = $question["choices"] ?? [];
+        if (!is_array($choices) || empty($choices)) continue;
+        $questions[] = [
+            "id" => ((string)($question["fixture_ordinal"] ?? "0")) . ":" . ((string)($question["ordinal"] ?? "0")),
+            "name" => (string)($question["prompt"] ?? ""),
+            "choices" => array_values($choices),
+        ];
+    }
+    return $questions;
+}
+
 function get_matches($game, $limit) {
     global $conn;
 
+    // Prefer the canonical YelloFC CMS/Web round so USSD and Web show the
+    // same fixtures. Legacy local tables remain a temporary fallback unless
+    // YELLOFC_CMS_REQUIRED=YES.
+    $round = get_yellofc_round($game, $limit);
+    if ($round && !empty($round["fixtures"]) && is_array($round["fixtures"])) {
+        $rows = [];
+        foreach (array_slice($round["fixtures"], 0, (int)$limit) as $fixture) {
+            $ordinal = (int)($fixture["ordinal"] ?? 0);
+            $home = trim((string)($fixture["home_team"] ?? ""));
+            $away = trim((string)($fixture["away_team"] ?? ""));
+            if ($ordinal < 1 || $home === "" || $away === "") continue;
+            $rows[] = [
+                "id" => $ordinal,
+                "name" => $home . " vs " . $away,
+                "ordinal" => $ordinal,
+            ];
+        }
+        if (count($rows) >= (int)$limit) return $rows;
+    }
+
+    if (defined("YELLOFC_CMS_REQUIRED") && strtoupper((string)YELLOFC_CMS_REQUIRED) === "YES") {
+        return [];
+    }
+
     $tables = get_games_tables($game);
+    if (!$tables) return [];
 
-    if (!$tables){
-        return [];
-    }
-
-    $table = $tables['teams'];
-
-    if (!$table){
-        return [];
-    }
+    $table = $tables["teams"];
+    if (!$table) return [];
 
     $sql = "SELECT id, CONCAT(teamaname, ' vs ', teambname) AS name FROM {$table} WHERE DATE(fixmdate) = DATE(NOW()) ORDER BY id DESC LIMIT {$limit}";
     $stmt = $conn->prepare($sql);
@@ -1048,9 +1141,7 @@ function get_matches($game, $limit) {
     $result = $stmt->get_result();
     $rows = $result->fetch_all(1);
 
-    if (!$rows || empty($rows)) {
-        return [];
-    }
+    if (!$rows || empty($rows)) return [];
     return $rows;
 }
 
@@ -1123,10 +1214,10 @@ function append_response($msisdn, $session_id, $ussd, $response){
 
 function get_default_type_options($type){
     $array = [
-        "soka" => ["1-0", "2-0", "3-0", "2-1", "3-1", "3-2", "Any Other Score", "0-0", "Draw"],
+        "soka" => ["1-0", "2-0", "3-0", "2-1", "3-1", "3-2", "Any Other Score", "0-0", "Score Draw"],
         "predictor" => ["Home", "Draw", "Away"],
         "soka half" => ["Home", "Draw", "Away"],
-        "soka corners" => ["0-7", "8", "9", "10", "11+"],
+        "soka corners" => ["0-3", "4", "5", "6", "7", "8", "9", "10", "11+"],
     ];
 
     return $array[strtolower($type)] ?? [];
@@ -1388,22 +1479,127 @@ function handle_soka($data, $base_ussd, $max = null){
     return [$response, $type, $message_type];
 }
 
+function handle_trivia_type($data, $base_sublim){
+    $response = "";
+    $type = "false";
+    $message_type = 2;
+    $options = "";
+    $append = false;
+    $close = false;
+    $game = "Trivia";
+    $max = 8;
+
+    if (has_bet_today($data["msisdn"], $game)){
+        $response = "Welcome to Soka Trivia\nYou have placed an entry today. Dial 8022 to choose another game!";
+        close_session($data["msisdn"], $data["session_id"]);
+        return [$response, $type, $message_type];
+    }
+
+    $questions = get_trivia_questions();
+    if (count($questions) !== 8){
+        close_session($data["msisdn"], $data["session_id"]);
+        return ["Soka Trivia is not available right now. Please try again later.", "false", 2];
+    }
+
+    $debited = set_debited($data["msisdn"], $game);
+    if ($debited){
+        $data["debited"] = $debited[0] ? 1 : 0;
+        $data["debited_id"] = $debited[1];
+    }
+    $data["is_initial"] = set_initial($data["msisdn"], $game);
+
+    if ((string)$data["sublim"] === (string)$base_sublim){
+        $response = "Welcome to Soka Trivia\nAnswer 8 questions across 2 matches to win N2,000,000\n";
+        $options = "Press 1 to continue...";
+        append_ussd($data["msisdn"], $data["session_id"], $data["ussd_string"]);
+        return [$response.$options, "true", 1];
+    }
+
+    $confirm = substr((string)$data["sublim"], 1, 1);
+    if ($confirm != "1"){
+        close_session($data["msisdn"], $data["session_id"]);
+        return ["Thank you. Bye!", "false", 2];
+    }
+
+    $data["sublim"] = substr_replace((string)$data["sublim"], "", 1, 1);
+    $count = strlen($data["sublim"]) - 1;
+    $user_input = (string)$data["ussd_string"];
+    $current_question = $count + 1;
+
+    if ($count <= $max && $data["sublim"] != (string)$base_sublim){
+        $question = $questions[$count - 1] ?? null;
+        $choiceIndex = ctype_digit($user_input) ? ((int)$user_input - 1) : -1;
+        $choices = $question["choices"] ?? [];
+        if (!$question || $choiceIndex < 0 || !array_key_exists($choiceIndex, $choices)){
+            $response = "Invalid option. Please choose one of the listed answers.\n";
+            $current_question = max(1, $current_question - 1);
+            $count = max(0, $count - 1);
+        }else{
+            handle_user_pick(
+                $data["msisdn"], $data["session_id"], (string)$choices[$choiceIndex],
+                $data["ussd_string"], $count - 1, "Trivia", $questions
+            );
+            $append = true;
+        }
+    }else{
+        $append = true;
+    }
+
+    if ($count < $max){
+        $question = $questions[$current_question - 1] ?? null;
+        if (!$question){
+            $response = "Soka Trivia is not available right now. Please try again later.";
+            $close = true;
+        }else{
+            $response .= "Q{$current_question}/8: ".$question["name"]."\n";
+            foreach ($question["choices"] as $key => $choice){
+                $options .= ($key + 1).". ".$choice."\n";
+            }
+            $type = "true";
+            $message_type = 1;
+        }
+    }else{
+        $data["game"] = $game;
+        $data["winnings"] = 2000000;
+        $data["psipid"] = get_psipid($game);
+        $data["sms_psipid"] = get_sms_psipid($game);
+        list($response, $close, $append, $openEntry) = handleSubmit(
+            $data, $user_input, $max, $count, $data["sublim"], $append, "trivia"
+        );
+        if ($close != true || $openEntry == true){
+            $type = "true";
+            $message_type = 1;
+        }
+    }
+
+    $response .= $options;
+    if (!empty($response) && $append){
+        append_ussd($data["msisdn"], $data["session_id"], $data["ussd_string"]);
+    }
+    if ($close == true) close_session($data["msisdn"], $data["session_id"]);
+    return [$response, $type, $message_type];
+}
+
 function handle_others($data, $base_ussd, $max = null){
     $response = "Something went wrong";
     $type = "false";
     $message_type = 2;
 
-    if ($data['checker'] == $base_ussd){
-        $options = "";
-        $response = "Coming soon...";
-        $type = "false";
-        $message_type = 2;
-        append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
-        close_session($data['msisdn'], $data['session_id']);
+    if ($data["checker"] == $base_ussd){
+        $response = "More Games:\n1. Soka Trivia - N2M";
+        $type = "true";
+        $message_type = 1;
+        append_ussd($data["msisdn"], $data["session_id"], $data["ussd_string"]);
         return [$response, $type, $message_type];
     }
-    close_session($data['msisdn'], $data['session_id']);
-    return [$response, $type, $message_type];
+
+    $sublim = (string) preg_replace('/^'.preg_quote($base_ussd, '/').'/', "", $data["checker"]);
+    if (strpos($sublim, "1") === 0){
+        return handle_trivia_type(array_merge($data, ["sublim" => $sublim, "winnings" => 2000000]), 1);
+    }
+
+    close_session($data["msisdn"], $data["session_id"]);
+    return ["Invalid option. Please dial 8022 and try again.", "false", 2];
 }
 
 function insert_multiple($table, $rows) {
