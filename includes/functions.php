@@ -377,8 +377,9 @@ function handle_total_goals_type($data, $base_sublim, $max){
 
     if ($count <= $max && $custom != true){
         if ($data['sublim'] != $base_sublim){
-            if (is_numeric($user_input)){
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($count - 1), "Total Goals", $matches_array);
+            if (ctype_digit((string)$user_input) && (int)$user_input >= 0 && (int)$user_input <= 10){
+                $canonical_goals = ((int)$user_input === 10) ? "10+" : (string)((int)$user_input);
+                handle_user_pick($data['msisdn'], $data['session_id'], $canonical_goals, $data['ussd_string'], ($count - 1), "Total Goals", $matches_array);
                 $append = true;
             }else{
                 $is_valid_option = true;
@@ -403,10 +404,8 @@ function handle_total_goals_type($data, $base_sublim, $max){
             }else{
                 $current_match = $matches[$current_option - 1] ?? [];
                 if (!empty($current_match)){
-                    $response .= "{$current_match}\nEnter total goals:\n";
-                    $options = implode("\n", array_map(function($key, $v){ 
-                        return ($key + 1).". {$v}"; 
-                    }, array_keys($type_options), $type_options));
+                    $response .= "{$current_match}\nEnter total goals (0-10, where 10 means 10+):\n";
+                    $options = "";
 
                     $type = "true";
                     $message_type = 1;
@@ -725,35 +724,26 @@ function handle_soka_type_1($data, $base_sublim, $max){
     $options = "";
     $append = false;
     $close = false;
-    $is_valid_option = false;
-    $custom = false;
     $game = "Soka Half";
 
     if (has_bet_today($data['msisdn'], $game)){
-        $response .= "Welcome to {$game}\nWhere you predict match results for\n1st and 2nd half ({$max} picks)\nTo win N".number_format($data['winnings'], 0)."\n";
-        $options = "You have placed a bet today... We win more tomorrow or dial 8022 to choose another game!";
-        $type = "false";
-        $message_type = 2;
+        $response = "Welcome to {$game}\nYou have placed an entry today. Dial 8022 to choose another game!";
         close_session($data['msisdn'], $data['session_id']);
-        return [$response.$options, $type, $message_type];
+        return [$response, $type, $message_type];
     }
 
     $debited = set_debited($data['msisdn'], $game);
     if ($debited){
-        $data['debited'] = $debited[0]? 1 : 0;
+        $data['debited'] = $debited[0] ? 1 : 0;
         $data['debited_id'] = $debited[1];
     }
-
     $data['is_initial'] = set_initial($data['msisdn'], $game);
 
     if ($data['sublim'] == $base_sublim){
-        $response .= "Welcome to {$game}\nPredict match results for\n1st and 2nd half ({$max} picks)\nWin N".number_format($data['winnings'], 0)."\n";
+        $response = "Welcome to {$game}\nPredict 8 alternating Half-Time / Full-Time match outcomes\nWin N".number_format($data['winnings'], 0)."\n";
         $options = "Press 1 to continue...";
         append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
-
-        $type = "true";
-        $message_type = 1;
-        return [$response.$options, $type, $message_type];
+        return [$response.$options, "true", 1];
     }
 
     if (strlen($data['ussd_string']) > 1){
@@ -761,79 +751,60 @@ function handle_soka_type_1($data, $base_sublim, $max){
     }
 
     $confirm = substr($data['sublim'], 1, 1);
-
     if ($confirm != 1){
-        $response = "Thank you. Bye!";
-        $custom = true;
-        $append = false;
-        $close = true;
+        close_session($data['msisdn'], $data['session_id']);
+        return ["Thank you. Bye!", "false", 2];
     }
 
     $data['sublim'] = substr_replace($data['sublim'], '', 1, 1);
-
     $count = strlen($data['sublim']) - 1;
-    $user_input = $data['ussd_string'];
+    $user_input = (string)$data['ussd_string'];
     $current_option = $count + 1;
     $type_options = get_default_type_options("soka half");
-    $matches_array = get_matches("soka", ($max/2));
+    $matches_array = get_matches("soka half", $max);
 
-    if ($count <= $max && $custom != true){
-        if (in_array($user_input, [1, 2, 3])){
-            if ($data['sublim'] != $base_sublim){
-                $half = ($current_option  < 6? "(1H)" : "(2H)");
-                switch ($user_input){
-                    case 1: $user_input = "Home {$half}"; break;
-                    case 2: $user_input = "Draw {$half}"; break;
-                    case 3: $user_input = "Away {$half}"; break;
-                }
-
-                $v = $count - 1;
-                handle_user_pick($data['msisdn'], $data['session_id'], $user_input, $data['ussd_string'], ($v < ($max/2)? $v : ($v - ($max/2))), "", $matches_array);
-                $append = true;
-            }
+    if ($count <= $max && $data['sublim'] != $base_sublim){
+        if (in_array($user_input, ["1","2","3"], true)){
+            $choice = $type_options[((int)$user_input) - 1];
+            handle_user_pick(
+                $data['msisdn'], $data['session_id'], $choice, $data['ussd_string'],
+                $count - 1, "Soka Half", $matches_array
+            );
             $append = true;
         }else{
-            $is_valid_option = true;
-            $response = "Invalid option";
-            $current_option = $current_option - 1;
-            $count = $count - 1;
+            $response = "Invalid option\n";
+            $current_option = max(1, $current_option - 1);
+            $count = max(0, $count - 1);
         }
+    }else{
+        $append = true;
     }
 
     if ($count < $max){
-        if (!$custom){
-            $matches = array_column($matches_array, "name");
-
-            if (empty($matches) || count($matches) < $max){
-                $response = "No matches available yet.";
-                $type = "false";
-                $message_type = 2;
+        $matches = array_column($matches_array, "name");
+        if (count($matches) < $max){
+            $response = "No matches available yet.";
+            $close = true;
+        }else{
+            $current_match = $matches[$current_option - 1] ?? null;
+            if (!$current_match){
+                $response = "Match not available";
                 $close = true;
             }else{
-                $v = $current_option - 1;
-                $current_match = $matches[$v < ($max/2)? $v : ($v - ($max/2))] ?? [];
-                $half = ($current_option  < 5? "(1st Half)" : "(2nd Half)");
-                if (!empty($current_match)){
-                    $response .= "{$current_match} - {$half}\n";
-                    $options = implode("\n", array_map(function($key, $v){ 
-                        return ($key + 1).". {$v}"; 
-                    }, array_keys($type_options), $type_options));
-                    $type = "true";
-                    $message_type = 1;
-                }else{
-                    $response = "Match not available";
-                    $type = "false";
-                    $message_type = 2;
-                    $close = true;
-                }
+                $leg = ($current_option % 2 === 1) ? "Half Time" : "Full Time";
+                $response .= "M{$current_option} - {$leg}\n{$current_match}\n";
+                $options = "1. Home\n2. Draw\n3. Away";
+                $type = "true";
+                $message_type = 1;
             }
         }
     }else{
         $data['game'] = $game;
-        $data['psipid'] = get_psipid($data['game']);
-        $data['sms_psipid'] = get_sms_psipid($data['game']);
-        list($response, $close, $append, $openEntry) = handleSubmit($data, $user_input, $max, $count, $data['sublim'], $append, "soka");
-
+        $data['psipid'] = get_psipid($game);
+        $data['sms_psipid'] = get_sms_psipid($game);
+        list($response, $close, $append, $openEntry) = handleSubmit(
+            $data, $user_input, $max, $count, $data['sublim'], $append, "soka"
+        );
         if ($close != true || $openEntry == true){
             $type = "true";
             $message_type = 1;
@@ -841,19 +812,10 @@ function handle_soka_type_1($data, $base_sublim, $max){
     }
 
     $response .= $options;
-
-    if (strlen($data['ussd_string']) > 1){
-        $data['ussd_string'] = 1;
-    }
-
     if (!empty($response) && $append){
         append_ussd($data['msisdn'], $data['session_id'], $data['ussd_string']);
     }
-
-    if ($close == true){
-        close_session($data['msisdn'], $data['session_id']);
-    }
-
+    if ($close == true) close_session($data['msisdn'], $data['session_id']);
     return [$response, $type, $message_type];
 }
 
@@ -921,17 +883,14 @@ function handle_soka_type_2($data, $base_sublim, $max){
 
     if ($count <= $max && $custom != true){
         if ($data['sublim'] != $base_sublim){
-            if ($user_input == 7){
-                $response = "Please enter custom total corners (e.g 0-2, 3-9):\n";
-                $custom = true;
-                $type = "true";
-                $message_type = 1;
-                $count = $count - 1;
-            }else{
-                $user_option = is_sport_score($user_input)? str_replace(" ", "", $user_input) : $type_options[$user_input - 1];
-                $data['ussd_string'] = is_sport_score($user_input)? 7 : $data['ussd_string'];
+            if (ctype_digit((string)$user_input) && (int)$user_input >= 1 && (int)$user_input <= 9){
+                $user_option = $type_options[((int)$user_input) - 1];
                 handle_user_pick($data['msisdn'], $data['session_id'], $user_option, $data['ussd_string'], ($count - 1), "Total Corners", $matches_array);
                 $append = true;
+            }else{
+                $response = "Invalid option";
+                $current_option = max(1, $current_option - 1);
+                $count = max(0, $count - 1);
             }
         }else{
             $append = true;
