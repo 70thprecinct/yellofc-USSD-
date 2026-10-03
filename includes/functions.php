@@ -1665,6 +1665,87 @@ function insert($table, $data) {
     }
 }
 
+function yellofc_signed_post($path, $payload){
+    if (!defined("YELLOFC_API_BASE_URL") || !YELLOFC_API_BASE_URL ||
+        !defined("YELLOFC_USSD_BRIDGE_SECRET") || strlen((string)YELLOFC_USSD_BRIDGE_SECRET) < 32) return null;
+    $json = json_encode($payload, JSON_UNESCAPED_SLASHES);
+    if (!$json) return null;
+    $url = rtrim(YELLOFC_API_BASE_URL, "/") . "/" . ltrim($path, "/");
+    $timestamp = (string)round(microtime(true) * 1000);
+    $signature = hash_hmac("sha256", $timestamp . "." . $json, YELLOFC_USSD_BRIDGE_SECRET);
+    $headers = [
+        "Content-Type: application/json",
+        "Accept: application/json",
+        "X-YelloFC-Timestamp: " . $timestamp,
+        "X-YelloFC-Signature: " . $signature,
+    ];
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 8,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $json,
+        CURLOPT_HTTPHEADER => $headers,
+    ]);
+    if (defined("YELLOFC_API_BASIC_USER") && defined("YELLOFC_API_BASIC_PASS") &&
+        YELLOFC_API_BASIC_USER !== "" && YELLOFC_API_BASIC_PASS !== "") {
+        curl_setopt($ch, CURLOPT_USERPWD, YELLOFC_API_BASIC_USER . ":" . YELLOFC_API_BASIC_PASS);
+    }
+    $response = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($status !== 200 || !$response) return null;
+    $decoded = json_decode((string)$response, true);
+    return is_array($decoded) ? $decoded : null;
+}
+
+function get_yellofc_points($msisdn, $gameKey){
+    $path = defined("YELLOFC_USSD_POINTS_PATH") && YELLOFC_USSD_POINTS_PATH
+        ? YELLOFC_USSD_POINTS_PATH : "/api/integrations/ussd/points";
+    return yellofc_signed_post($path, ["msisdn" => $msisdn, "gameKey" => $gameKey]);
+}
+
+function handle_points($data, $base_sublim){
+    $games = [
+        1 => ["key" => "soka8", "name" => "Soka 8"],
+        2 => ["key" => "soka6", "name" => "Soka 6"],
+        3 => ["key" => "soka4", "name" => "Soka 4"],
+        4 => ["key" => "corners", "name" => "Soka Corners"],
+        5 => ["key" => "half", "name" => "Soka Half"],
+        6 => ["key" => "trivia", "name" => "Soka Trivia"],
+        7 => ["key" => "goals", "name" => "Total Goals"],
+        8 => ["key" => "correct", "name" => "Correct Score"],
+        9 => ["key" => "predictor", "name" => "Football Predictor"],
+    ];
+    if ($data["checker"] === $base_sublim){
+        append_ussd($data["msisdn"], $data["session_id"], $data["ussd_string"]);
+        $rows = [];
+        foreach ($games as $i => $game) $rows[] = $i . ". " . $game["name"];
+        return ["My YelloFC Points\nChoose game:\n" . implode("\n", $rows), "true", 1];
+    }
+    $choice = (int)$data["ussd_string"];
+    if (!isset($games[$choice])){
+        close_session($data["msisdn"], $data["session_id"]);
+        return ["Invalid game choice. Dial *8022# and try again.", "false", 2];
+    }
+    $game = $games[$choice];
+    $points = get_yellofc_points($data["msisdn"], $game["key"]);
+    close_session($data["msisdn"], $data["session_id"]);
+    if (!$points){
+        return ["Points are temporarily unavailable. Please try again later.", "false", 2];
+    }
+    $weekly = $points["weekly"] ?? ["rank" => null, "points" => 0];
+    $monthly = $points["monthly"] ?? ["rank" => null, "points" => 0];
+    $wrank = !empty($weekly["rank"]) ? "#" . $weekly["rank"] : "Not ranked";
+    $mrank = !empty($monthly["rank"]) ? "#" . $monthly["rank"] : "Not ranked";
+    return [
+        $game["name"] . " Points\nWeekly: " . $weekly["points"] . " pts (" . $wrank . ")\n" .
+        "Monthly: " . $monthly["points"] . " pts (" . $mrank . ")\nKeep playing to move up!",
+        "false", 2
+    ];
+}
+
 function sync_yellofc_entry($msisdn, $game, $ticketRef, $selections){
     if (!defined("YELLOFC_ENABLE_ENTRY_BRIDGE") || strtoupper((string)YELLOFC_ENABLE_ENTRY_BRIDGE) !== "YES") return null;
     if (!defined("YELLOFC_API_BASE_URL") || !YELLOFC_API_BASE_URL ||
