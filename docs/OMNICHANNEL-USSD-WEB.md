@@ -117,3 +117,26 @@ Acquisition source should be retained as ussd, evina, mfilter or sms-return for 
 5. Entitlement decision cutover — NOT YET ENABLED: legacy soka_subscriptions/non_soka_subscriptions usestat remains in place for the live PHP decision path until staging parity proves central daily_entitlements can replace it safely.
 6. SMS return bridge — PARTIALLY AVAILABLE: opaque one-time return tokens exist in the new backend, but production daily-SMS issuance and final TTL policy still require certification.
 7. Legacy retirement — FUTURE: retire duplicate MySQL gameplay/subscription state only after staging and production parity are proven.
+
+## Agreed acquisition, return-link, cross-sell and referral rules
+
+The wider YelloFC operating model is now fixed as follows:
+
+- MTN is the authoritative subscription/charging source.
+- PISI forwards MTN lifecycle callbacks to YelloFC; PISI does not independently confirm subscription.
+- First-time Web-originated acquisition must pass through the enabled security manager: Evina or MFilter.
+- Direct game-specific USSD acquisition does not pass through Evina/MFilter.
+- The deliberate game-specific USSD dial is the first subscription request/opt-in; MTN supplies the required second confirmation.
+- Do not add a redundant third YelloFC confirmation between the direct game dial and MTN confirmation.
+- After MTN confirmation, MTN → PISI → YelloFC callback creates the YelloFC daily entitlement.
+- Callback-triggered SMS return links remain a core identity bridge when header enrichment is unavailable or intermittent.
+- The tt/return token must be opaque, non-MSISDN-derived, scoped server-side to subscriber/game/day/lifecycle context, expiring, and exchanged into a browser session.
+- The token does not by itself mean "charged"; the underlying entitlement distinguishes active_trial from active_paid.
+- One subscriber identity spans Web, USSD and SMS-return access.
+- Additional games are independent subscriptions; cross-sell must never silently bundle products.
+- Web cross-sell should prefer subscriber-aware My Games / More Games surfaces after secure return.
+- A non-subscribed game may offer Dial & Play or Subscribe Online. Dial & Play uses the game's direct USSD route; Subscribe Online uses the enabled Evina/MFilter path.
+- Referrals must be customer-led via an opaque referral link/code. A referral link never subscribes the friend.
+- Referral qualification/reward should occur only after an approved milestone such as first successful paid renewal, not merely trial initiation.
+- Do not collect friends' MSISDNs merely to send invitations when the customer can share a referral link themselves.
+
