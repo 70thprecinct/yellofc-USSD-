@@ -19,7 +19,7 @@ jobs:
           find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Verify frozen YelloFC USSD product values
         run: |
-          php -r '$c=file_get_contents("includes/functions.php"); $required=[
+          php -r '$c=file_get_contents("includes/functions.php")."\n".file_get_contents("index.php"); $required=[
             "2. Total Goals - N3M",
             "\"Total Goals\", \"amount\" => \"N3M\"",
             "\"Soka Corners\", \"amount\" => \"N2M\"",
