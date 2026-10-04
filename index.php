@@ -129,7 +129,7 @@ if ($ussd_string == "8022"){
         exit;
     }
 
-    $options = "1. Predict and Win N1M Everyday\n2. Soka Games\n3. More Games\n4. My Points";
+    $options = "1. Predict and Win N1M Everyday\n2. Soka Games\n3. More Games\n4. My Points\n5. YelloFC Champions";
     $response = "Win Millions of Cash Daily!\n".$options;
     $type = "true";
     $message_type = 1;
@@ -211,6 +211,8 @@ if (strpos($checker, '80221') !== false){
     list($response, $type, $message_type) = handle_others($array, "80223");
 }else if (strpos($checker, '80224') !== false){
     list($response, $type, $message_type) = handle_points($array, "80224");
+}else if (strpos($checker, '80225') !== false){
+    list($response, $type, $message_type) = handle_champions($array, "80225");
 }
 
 append_response($msisdn, $sessionId, $ussd_string, $response);
