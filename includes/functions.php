@@ -1708,6 +1708,111 @@ function get_yellofc_points($msisdn, $gameKey){
     return yellofc_signed_post($path, ["msisdn" => $msisdn, "gameKey" => $gameKey]);
 }
 
+function get_yellofc_champions($msisdn){
+    $path = defined("YELLOFC_USSD_POINTS_PATH") && YELLOFC_USSD_POINTS_PATH
+        ? YELLOFC_USSD_POINTS_PATH : "/api/integrations/ussd/points";
+    return yellofc_signed_post($path, ["msisdn" => $msisdn, "scope" => "champions"]);
+}
+
+function champions_period_text($period, $label){
+    $eligible = !empty($period["eligible"]);
+    $rank = !empty($period["rank"]) ? "#" . $period["rank"] : "Not ranked";
+    $points = (int)($period["points"] ?? 0);
+    $days = (int)($period["qualifyingDays"] ?? 0);
+    $required = (int)($period["requiredQualifyingDays"] ?? 0);
+    $games = (int)($period["subscribedGames"] ?? 0);
+    $text = $label . " Champions\n";
+    $text .= ($eligible ? "Qualified - Rank " . $rank : "Not yet qualified") . "\n";
+    $text .= "Points: " . $points . "\n";
+    $text .= "Qualifying days: " . $days . "/" . $required . "\n";
+    $text .= "Games in period: " . $games;
+    $best = $period["bestGames"] ?? [];
+    if ($eligible && is_array($best) && !empty($best)){
+        $labels = [];
+        foreach (array_slice($best, 0, 3) as $game){
+            $labels[] = ($game["gameName"] ?? $game["gameKey"] ?? "Game") . " " . ((int)($game["points"] ?? 0)) . "pts";
+        }
+        $text .= "\nBest 3: " . implode(", ", $labels);
+    }else{
+        $text .= "\nNeed 3+ active games on enough qualifying days.";
+    }
+    return $text;
+}
+
+function champions_top_text($period, $label){
+    $top = $period["top"] ?? [];
+    if (!is_array($top) || empty($top)) return $label . " Champions\nNo qualified Champions yet.";
+    $lines = [$label . " Champions - Top 5"];
+    foreach (array_slice($top, 0, 5) as $row){
+        $lines[] = "#" . ((int)($row["rank"] ?? 0)) . " " . ($row["player"] ?? "***") . " - " . ((int)($row["points"] ?? 0)) . "pts";
+    }
+    return implode("\n", $lines);
+}
+
+function champions_reward_text($period, $label){
+    $tiers = $period["rewards"] ?? [];
+    if (!is_array($tiers) || empty($tiers)) return $label . " Champions prizes are not active yet.";
+    $parts = [];
+    foreach ($tiers as $tier){
+        $from = (int)($tier["rankFrom"] ?? 0);
+        $to = (int)($tier["rankTo"] ?? 0);
+        $rank = $from === $to ? (string)$from : $from . "-" . $to;
+        $value = (int)($tier["rewardValue"] ?? 0);
+        $type = $tier["rewardType"] ?? "";
+        if ($type === "cash" || $type === "airtime"){
+            $reward = "N" . number_format($value);
+        }else if ($type === "data"){
+            $reward = ($value >= 1024 && $value % 1024 === 0) ? (($value / 1024) . "GB") : ($value . "MB");
+        }else{
+            $reward = (string)$value;
+        }
+        $parts[] = $rank . ": " . $reward;
+    }
+    return $label . " Champions Prizes\n" . implode("\n", $parts);
+}
+
+function handle_champions($data, $base_sublim){
+    if ($data["checker"] === $base_sublim){
+        append_ussd($data["msisdn"], $data["session_id"], $data["ussd_string"]);
+        return ["YelloFC Champions\n1. Weekly Rank\n2. Monthly Rank\n3. Qualification\n4. Weekly Top 5\n5. Monthly Top 5\n6. Prizes", "true", 1];
+    }
+
+    $sublim = (string)preg_replace('/^'.preg_quote($base_sublim, '/').'/', "", $data["checker"]);
+    if ($sublim === "6"){
+        append_ussd($data["msisdn"], $data["session_id"], $data["ussd_string"]);
+        return ["Champions Prizes\n1. Weekly\n2. Monthly", "true", 1];
+    }
+
+    $champions = get_yellofc_champions($data["msisdn"]);
+    if (!$champions){
+        close_session($data["msisdn"], $data["session_id"]);
+        return ["YelloFC Champions is temporarily unavailable. Please try again later.", "false", 2];
+    }
+    if (empty($champions["known"])){
+        close_session($data["msisdn"], $data["session_id"]);
+        return ["No YelloFC activity found for this number yet. Dial *8022# and choose a game.", "false", 2];
+    }
+
+    $weekly = $champions["weekly"] ?? [];
+    $monthly = $champions["monthly"] ?? [];
+    if ($sublim === "1") $response = champions_period_text($weekly, "Weekly");
+    else if ($sublim === "2") $response = champions_period_text($monthly, "Monthly");
+    else if ($sublim === "3"){
+        $response = "Champions Qualification\nWeekly: " . ((int)($weekly["qualifyingDays"] ?? 0)) . "/" . ((int)($weekly["requiredQualifyingDays"] ?? 4)) . " days";
+        $response .= "\nMonthly: " . ((int)($monthly["qualifyingDays"] ?? 0)) . "/" . ((int)($monthly["requiredQualifyingDays"] ?? 15)) . " days";
+        $response .= "\nHave 3+ active games on each qualifying day.";
+        if (empty($weekly["eligible"]) || empty($monthly["eligible"])) $response .= "\nDial *8022# to choose another game.";
+    }
+    else if ($sublim === "4") $response = champions_top_text($weekly, "Weekly");
+    else if ($sublim === "5") $response = champions_top_text($monthly, "Monthly");
+    else if ($sublim === "61") $response = champions_reward_text($weekly, "Weekly");
+    else if ($sublim === "62") $response = champions_reward_text($monthly, "Monthly");
+    else $response = "Invalid Champions option. Dial *8022# and try again.";
+
+    close_session($data["msisdn"], $data["session_id"]);
+    return [$response, "false", 2];
+}
+
 function handle_points($data, $base_sublim){
     $games = [
         1 => ["key" => "soka8", "name" => "Soka 8"],
