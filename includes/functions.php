@@ -2,12 +2,14 @@
 function get_cross_sell_games($name, $limit = 4){
     $games = [
         ["name" => "Predictor", "amount" => "N1M", "code" => "80221", "ussd" => 1],
-        ["name" => "Total Goals", "amount" => "N1M", "code" => "80221", "ussd" => 2],
+        ["name" => "Total Goals", "amount" => "N3M", "code" => "80221", "ussd" => 2],
         ["name" => "Correct Score", "amount" => "N1M", "code" => "80221", "ussd" => 3],
         ["name" => "Soka 4", "amount" => "N2M", "code" => "80222", "ussd" => 1],
         ["name" => "Soka 6", "amount" => "N3M", "code" => "80222", "ussd" => 2],
         ["name" => "Soka 8", "amount" => "N10M", "code" => "80222", "ussd" => 3],
         ["name" => "Soka Half", "amount" => "N2M", "code" => "80222", "ussd" => 4],
+        ["name" => "Soka Corners", "amount" => "N2M", "code" => "80222", "ussd" => 5],
+        ["name" => "Trivia", "amount" => "N2M", "code" => "80223", "ussd" => 1],
     ];
 
     $array = [];
@@ -32,7 +34,7 @@ function get_promotional_message($game)
     $messages = [
         [
             "game" => "Total Goals",
-            "message" => "Predict The Total Goals of 6 matches & WIN N1M DAILY!\nFirst day FREE! Dial *8022*2# now to start winning!"
+            "message" => "Predict The Total Goals of 6 matches & WIN N3M DAILY!\nFirst day FREE! Dial *8022*2# now to start winning!"
         ],
         [
             "game" => "Correct Score",
@@ -43,7 +45,7 @@ function get_promotional_message($game)
             "message" => "Play Soka 4 & WIN N2M DAILY! Dial *8022*4#\nEasy entry, BIG rewards!",
         ],
         [
-            "game" => "Total Corners",
+            "game" => "Soka Corners",
             "message" => "Predict the Total Corners & WIN N2M DAILY!\nDial *8022*8# now!",
         ],
         [
@@ -56,11 +58,11 @@ function get_promotional_message($game)
         ],
         [
             "game" => "Soka Half",
-            "message" => "Predict Halftime & Fulltime Score to  WIN N2M! Dial *8022*7# now",
+            "message" => "Predict alternating Half-Time / Full-Time outcomes & WIN N2M! Dial *8022*7# now",
         ],
         [
             "game" => "Soka 8",
-            "message" => "N10M could be yours TODAY! Play DAILY!\nPlay Soka 8 daily to win BIG. Dial *8022*7#",
+            "message" => "N10M could be yours TODAY! Play DAILY!\nPlay Soka 8 daily to win BIG. Dial *8022*6#",
         ]
     ];
 
@@ -1390,7 +1392,7 @@ function handle_predictor($data, $base_ussd){
     $message_type = 2;
 
     if ($data['checker'] == $base_ussd){
-        $options = "1. Predictor - N1M\n2. Total Goals - N1M\n3. Correct Score - N1M";
+        $options = "1. Predictor - N1M\n2. Total Goals - N3M\n3. Correct Score - N1M";
         $response = "Choose Game:\n".$options;
         $type = "true";
         $message_type = 1;
@@ -1403,7 +1405,7 @@ function handle_predictor($data, $base_ussd){
     if (strpos($sublim, "1") === 0){
         list($response, $type, $message_type) = handle_predictor_type(array_merge($data, ["sublim" => $sublim, "name" => "Predictor", "winnings" => 1000000]), 1, 6);
     }else if (strpos($sublim, "2") === 0){
-        list($response, $type, $message_type) = handle_total_goals_type(array_merge($data, ["sublim" => $sublim, "name" => "Total Goals", "winnings" => 1000000]), 2, 6);
+        list($response, $type, $message_type) = handle_total_goals_type(array_merge($data, ["sublim" => $sublim, "name" => "Total Goals", "winnings" => 3000000]), 2, 6);
     }else if (strpos($sublim, "3") === 0){
         list($response, $type, $message_type) = handle_correct_score_type(array_merge($data, ["sublim" => $sublim, "name" => "Correct Score", "winnings" => 1000000]), 3, 6);
     }
