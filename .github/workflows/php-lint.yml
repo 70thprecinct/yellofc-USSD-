@@ -17,3 +17,12 @@ jobs:
       - name: Lint PHP
         run: |
           find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Verify frozen YelloFC USSD product values
+        run: |
+          php -r '$c=file_get_contents("includes/functions.php"); $required=[
+            "2. Total Goals - N3M",
+            "\"Total Goals\", \"amount\" => \"N3M\"",
+            "\"Soka Corners\", \"amount\" => \"N2M\"",
+            "\"Trivia\", \"amount\" => \"N2M\"",
+            "Dial *8022*6#"
+          ]; foreach($required as $x){ if(strpos($c,$x)===false){fwrite(STDERR,"Missing frozen value: ".$x.PHP_EOL); exit(1);} }'
