@@ -1,3 +1,5 @@
 .env
 pisi.token.json
 ussd.log
+.env.backup
+psi_callback_error.log

@@ -110,6 +110,14 @@ if ($ussd_string == "8022*1"){
         echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
         exit;
     }
+}else if ($ussd_string == "8022*9"){
+    $ussd = "80223";
+    $ussd_string = 1;
+    if (!create_session($msisdn, $sessionId, $ussd, $debited)){
+        append_response($msisdn, $sessionId, $ussd_string, $response);
+        echo ussd_formatter($msisdn, $response, $serviceCode, $type, $sessionId, $message_type);
+        exit;
+    }
 }
 
 
@@ -121,7 +129,7 @@ if ($ussd_string == "8022"){
         exit;
     }
 
-    $options = "1. Predict and Win N1M Everyday\n2. Soka Games\n3. More Games";
+    $options = "1. Predict and Win N1M Everyday\n2. Soka Games\n3. More Games\n4. My Points\n5. YelloFC Champions";
     $response = "Win Millions of Cash Daily!\n".$options;
     $type = "true";
     $message_type = 1;
@@ -201,6 +209,10 @@ if (strpos($checker, '80221') !== false){
     list($response, $type, $message_type) = handle_soka($array, "80222");
 }else if (strpos($checker, '80223') !== false){
     list($response, $type, $message_type) = handle_others($array, "80223");
+}else if (strpos($checker, '80224') !== false){
+    list($response, $type, $message_type) = handle_points($array, "80224");
+}else if (strpos($checker, '80225') !== false){
+    list($response, $type, $message_type) = handle_champions($array, "80225");
 }
 
 append_response($msisdn, $sessionId, $ussd_string, $response);
