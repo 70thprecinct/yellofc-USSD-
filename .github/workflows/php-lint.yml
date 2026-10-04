@@ -24,5 +24,10 @@ jobs:
             "\"Total Goals\", \"amount\" => \"N3M\"",
             "\"Soka Corners\", \"amount\" => \"N2M\"",
             "\"Trivia\", \"amount\" => \"N2M\"",
-            "Dial *8022*6#"
+            "Dial *8022*6#",
+            "5. YelloFC Champions",
+            "function handle_champions",
+            "\"scope\" => \"champions\"",
+            "Weekly Top 5",
+            "Monthly Top 5"
           ]; foreach($required as $x){ if(strpos($c,$x)===false){fwrite(STDERR,"Missing frozen value: ".$x.PHP_EOL); exit(1);} }'
